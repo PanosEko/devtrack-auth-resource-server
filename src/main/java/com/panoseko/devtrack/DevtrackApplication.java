@@ -21,7 +21,7 @@ public class DevtrackApplication {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
 						.allowedMethods("*")
-						.allowedOrigins("http://localhost:8080","http://localhost:3000","http://localhost:3000/login","http://localhost:3000/home")
+						.allowedOrigins("http://localhost:8080","http://localhost:3000","https://devtrack-frontend.vercel.app")
 						.allowedHeaders("*")
 						.allowCredentials(true)
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
