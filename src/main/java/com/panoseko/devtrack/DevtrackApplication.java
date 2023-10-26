@@ -22,7 +22,7 @@ public class DevtrackApplication {
 				registry.addMapping("/**")
 						.allowedMethods("*")
 //						.allowedOrigins("http://localhost:8080","http://localhost:3000")
-						.allowedOrigins("postman://app", "https://devtrack-frontend.vercel.app")
+						.allowedOrigins("https://app.getpostman.com", "https://devtrack-frontend.vercel.app")
 						.allowedHeaders("*")
 						.allowCredentials(true)
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
