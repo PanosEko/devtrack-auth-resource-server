@@ -50,7 +50,7 @@ public class AuthenticationService {
                 "access-token",
                 accessToken,
                 "/api/v1/task",
-                "localhost",
+                "devtrack-backend.onrender.com",
                 15);
         Cookie refreshTokenCookie = CookieUtils.generateCookie(
                 "refresh-token",
