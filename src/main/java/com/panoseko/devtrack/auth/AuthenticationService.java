@@ -110,7 +110,7 @@ public class AuthenticationService {
                     "access-token",
                     accessToken,
                     "/api/v1/task",
-                    "localhost",
+                    "https://devtrack-backend.onrender.com",
                     15);
         }else {
             throw new BadCredentialsException("Invalid refresh token.");

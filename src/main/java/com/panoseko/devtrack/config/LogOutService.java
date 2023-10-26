@@ -57,7 +57,7 @@ public class LogOutService implements LogoutHandler {
                 "access-token",
                 null,
                 "/api/v1/task",
-                "localhost",
+                "https://devtrack-backend.onrender.com",
                 0); // 5 days
 
 //        // Create a new cookie with the expired token

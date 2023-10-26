@@ -93,7 +93,6 @@ public class TaskController {
 //    }
 
 }
-// TODO this gets the tasks grouped by status
 //    @GetMapping()
 //    public ResponseEntity<Map<Status, List<Task>>> getTasksGroupedByStatus(
 //            @CookieValue(name = "token") String jwtToken) {
