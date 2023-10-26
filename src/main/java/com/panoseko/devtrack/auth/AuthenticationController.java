@@ -69,7 +69,7 @@ public class AuthenticationController {
             try{
                 Cookie accessTokenCookie = authService.authenticateRefreshToken(refreshToken);
                 response.addCookie(accessTokenCookie);
-                return ResponseEntity.ok("Refresh token authenticated successfully.");
+                return ResponseEntity.ok("Access token authenticated successfully.");
             } catch (Exception e){
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                         .body("Invalid refresh token.");
