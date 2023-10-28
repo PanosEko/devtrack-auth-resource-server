@@ -84,13 +84,13 @@ public class AuthenticationService {
                 "access-token",
                 accessToken,
                 "/api/v1/task",
-                "devtrack.dedyn.io",
+                "api.devtrack.dedyn.io",
                 15);
         Cookie refreshTokenCookie = CookieUtils.generateCookie(
                 "refresh-token",
                 refreshToken,
                 "/api/v1/auth",
-                "devtrack.dedyn.io",
+                "api.devtrack.dedyn.io",
                 1440 * 5); // 5 days
         return new AuthenticationResponse(
                 accessTokenCookie,
