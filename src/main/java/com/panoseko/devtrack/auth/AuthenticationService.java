@@ -50,13 +50,13 @@ public class AuthenticationService {
                 "access-token",
                 accessToken,
                 "/api/v1/task",
-                "app.devtrack.dedyn.io",
+                "devtrack-backend.onrender.com",
                 15);
         Cookie refreshTokenCookie = CookieUtils.generateCookie(
                 "refresh-token",
                 refreshToken,
                 "/api/v1/auth",
-                "app.devtrack.dedyn.io",
+                "devtrack-backend.onrender.com",
                 1440 * 5); // 5 days
         return new AuthenticationResponse(
                 accessTokenCookie,
@@ -84,13 +84,13 @@ public class AuthenticationService {
                 "access-token",
                 accessToken,
                 "/api/v1/task",
-                "api.devtrack.dedyn.io",
+                "devtrack-backend.onrender.com",
                 15);
         Cookie refreshTokenCookie = CookieUtils.generateCookie(
                 "refresh-token",
                 refreshToken,
                 "/api/v1/auth",
-                "api.devtrack.dedyn.io",
+                "devtrack-backend.onrender.com",
                 1440 * 5); // 5 days
         return new AuthenticationResponse(
                 accessTokenCookie,
