@@ -43,7 +43,7 @@ public class LogOutService implements LogoutHandler {
             Authentication authentication
     ) {
         String refreshToken = CookieUtils.readServletCookie(request, "refresh-token").orElse(null);
-        Token storedToken = tokenRepository.findByToken(refreshToken).orElse(null);
+        var storedToken = tokenRepository.findByToken(refreshToken).orElse(null);
         if (storedToken != null) {
             storedToken.setExpired(true);
             storedToken.setRevoked(true);
