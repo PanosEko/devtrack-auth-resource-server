@@ -10,15 +10,13 @@ import com.panoseko.devtrack.user.UserRepository;
 
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -30,7 +28,21 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authManager;
     private final TokenRepository tokenRepository;
-    private final UserDetailsService userDetailsService;
+
+    @Value("${access.token.cookie.name}")
+    private String accessTokenCookieName;
+
+    @Value("${refresh.token.cookie.name}")
+    private String refreshTokenCookieName;
+
+    @Value("${access.token.path}")
+    private String accessTokenPath;
+
+    @Value("${refresh.token.path}")
+    private String refreshTokenPath;
+
+    @Value("${cookie.domain}")
+    private String cookieDomain;
 
 
     public AuthenticationResponse authenticateUser(AuthenticationRequest request) {
@@ -45,19 +57,9 @@ public class AuthenticationService {
         Map<String, Object> customClaims = Map.of("uid", user.getId());
         var accessToken = jwtService.generateAccessToken(customClaims, user);
         var refreshToken = jwtService.generateRefreshToken(user);
-        saveUserToken(user, refreshToken);
-        Cookie accessTokenCookie = CookieUtils.generateCookie(
-                "access-token",
-                accessToken,
-                "/api/v1/task",
-                "devtrack.dedyn.io",
-                15);
-        Cookie refreshTokenCookie = CookieUtils.generateCookie(
-                "refresh-token",
-                refreshToken,
-                "/api/v1/auth",
-                "devtrack.dedyn.io",
-                1440 * 5); // 5 days
+        saveToken(user, refreshToken);
+        Cookie accessTokenCookie = generateAccessCookie(accessToken);
+        Cookie refreshTokenCookie = generateRefreshCookie(refreshToken);
         return new AuthenticationResponse(
                 accessTokenCookie,
                 refreshTokenCookie
@@ -75,23 +77,13 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .build();
-        var savedUser = userRepository.save(user);
+        userRepository.save(user);
         Map<String, Object> customClaims = Map.of("uid", user.getId());
         var accessToken = jwtService.generateAccessToken(customClaims, user);
         var refreshToken = jwtService.generateRefreshToken(user);
-        saveUserToken(user, refreshToken);
-        Cookie accessTokenCookie = CookieUtils.generateCookie(
-                "access-token",
-                accessToken,
-                "/api/v1/task",
-                "devtrack.dedyn.io",
-                15);
-        Cookie refreshTokenCookie = CookieUtils.generateCookie(
-                "refresh-token",
-                refreshToken,
-                "/api/v1/auth",
-                "devtrack.dedyn.io",
-                1440 * 5); // 5 days
+        saveToken(user, refreshToken);
+        Cookie accessTokenCookie = generateAccessCookie(accessToken);
+        Cookie refreshTokenCookie = generateRefreshCookie(refreshToken);
         return new AuthenticationResponse(
                 accessTokenCookie,
                 refreshTokenCookie
@@ -103,22 +95,15 @@ public class AuthenticationService {
         var user= userRepository.findMemberByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found."));
         if (jwtService.isRefreshTokenValid(token, user)) {
-            System.out.println("Refresh Token valid");
             Map<String, Object> customClaims = Map.of("uid", user.getId());
             var accessToken = jwtService.generateAccessToken(customClaims, user);
-            return CookieUtils.generateCookie(
-                    "access-token",
-                    accessToken,
-                    "/api/v1/task",
-                    "devtrack.dedyn.io",
-                    15);
+            return generateAccessCookie(accessToken);
         }else {
             throw new BadCredentialsException("Invalid refresh token.");
         }
     }
 
-
-    private void saveUserToken(User user, String jwtToken) {
+    private void saveToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
                 .token(jwtToken)
@@ -129,29 +114,23 @@ public class AuthenticationService {
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(User user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
-        if (validUserTokens.isEmpty())
-            return;
-        validUserTokens.forEach(token -> {
-            token.setExpired(true);
-            token.setRevoked(true);
-        });
-        tokenRepository.saveAll(validUserTokens);
+    private Cookie generateAccessCookie(String accessToken) {
+        return CookieUtils.generateCookie(
+                accessTokenCookieName,
+                accessToken,
+                accessTokenPath,
+                cookieDomain,
+                15
+        );
     }
-
-//
-//    public String authenticateRefreshToken(String token) {
-//        String username = jwtService.extractUsername(token);
-//        var user= userRepository.findMemberByUsername(username)
-//                .orElseThrow(() -> new UsernameNotFoundException("User not found."));
-//        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-//        if (jwtService.isRefreshTokenValid(token, userDetails)) {
-//            return generateAccessToken(user);
-//        }else{
-//            throw new BadCredentialsException("Invalid refresh token.");
-//        }
-//    }
-
+    private Cookie generateRefreshCookie(String refreshToken) {
+        return CookieUtils.generateCookie(
+                refreshTokenCookieName,
+                refreshToken,
+                refreshTokenPath,
+                cookieDomain,
+                1440 * 5 // 5 days
+        );
+    }
 
 }

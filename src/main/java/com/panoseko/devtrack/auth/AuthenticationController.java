@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +35,6 @@ public class AuthenticationController {
         }
     }
 
-
     @PostMapping("/register")
     public ResponseEntity<?> register(
             @RequestBody RegisterRequest request,
@@ -55,7 +53,6 @@ public class AuthenticationController {
                     .body("Error registering user.");
         }
     }
-
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(
@@ -77,23 +74,5 @@ public class AuthenticationController {
         }
     }
 }
-
-//    @GetMapping("/checkToken")
-//    public ResponseEntity<?> authenticateToken(@CookieValue(name = "token", required = false) String jwtToken) {
-//        if (jwtToken == null) {
-//            System.out.println("Token not found");
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token not found");
-//        } else {
-//            String username = jwtService.extractUsername(jwtToken);
-//            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-//            if (jwtService.isRefreshTokenValid(jwtToken, userDetails)) {
-//                System.out.println("Token valid");
-//                return ResponseEntity.status(HttpStatus.OK).body(null);
-//            } else {
-//                System.out.println("Token expired");
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token expired");
-//            }
-//        }
-//    }
 
 

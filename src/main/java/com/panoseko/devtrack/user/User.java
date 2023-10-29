@@ -32,7 +32,6 @@ public class User implements UserDetails {
     )
     private Long id;
     private String fullName;
-    // Role in the project e.g Developer, Project Manager, etc.
     private Integer projectRole;
     @Temporal(TemporalType.DATE)
     private LocalDate dob;

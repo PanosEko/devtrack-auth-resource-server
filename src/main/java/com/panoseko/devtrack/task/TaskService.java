@@ -5,12 +5,8 @@ import com.panoseko.devtrack.image.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 
 @Service
 public class TaskService {
@@ -39,26 +35,6 @@ public class TaskService {
         }
         return tasksResponse;
     }
-
-//    public Map<Status, List<TaskResponse>> getTasksByStatus(Long userId) {
-//        List<Task> tasks = taskRepository.findTasksByCreator(userId);
-//        Map<Status, List<TaskResponse>> tasksByStatus = new HashMap<>();
-//
-//        for (Task task : tasks) {
-//            Status status = task.getStatus();
-//            TaskResponse taskResponse = new TaskResponse(task);
-//            Image image = task.getImage();
-//            if (image != null) {
-//                image.setImageData(imageService.decompressImageData(image.getImageData()));
-//                taskResponse.setImage(image);
-//            }
-//
-//            tasksByStatus.computeIfAbsent(status, k -> new ArrayList<>()).add(taskResponse);
-//        }
-//
-//        return tasksByStatus;
-//    }
-
 
     @Transactional
     public Long addTask(AddTaskRequest addTaskRequest, Long userId) {
@@ -99,8 +75,8 @@ public class TaskService {
         taskRepository.save(task);
     }
 
-//    @Transactional
-    public void updateTask(UpdateTaskRequest updateTaskRequest,  Long userId) {
+    //    @Transactional
+    public void updateTask(UpdateTaskRequest updateTaskRequest, Long userId) {
         System.out.println("Update task id: " + updateTaskRequest.getId());
         Task task = new Task(
                 updateTaskRequest.getId(),
@@ -127,49 +103,4 @@ public class TaskService {
         }
         taskRepository.save(task);
     }
-
-//    public void updateTask(Task task) {
-//        if (taskRepository.existsById(task.getId())) {
-//            taskRepository.save(task);
-//        } else {
-//            throw new IllegalStateException("Task with id " + task.getId() + " does not exist");
-//        }
-//    }
-
-//    public Map<Status, List<TaskResponse>> groupTasksByStatus(List<TaskResponse> tasks) {
-//        Map<Status, List<TaskResponse>> tasksByStatus = new HashMap<>();
-//        for (TaskResponse task : tasks) {
-//            Status status = task.getStatus();
-//            tasksByStatus.computeIfAbsent(status, k -> new ArrayList<>()).add(task);
-//        }
-//        return tasksByStatus;
-//    }
 }
-//    public Map<Status, List<TaskResponse>> groupTasksByStatus(List<TaskResponse> tasks) {
-//        Map<Status, List<TaskResponse>> tasksByStatus = new HashMap<>();
-//
-//        for (TaskResponse task : tasks) {
-//            Status status = task.getStatus();
-//            tasksByStatus.computeIfAbsent(status, k -> new ArrayList<>()).add(task);
-//        }
-//        return tasksByStatus;
-//    }
-//}
-//
-//    public List<Task> getTasks(Long createdById) {
-//        List<Task> tasks=  taskRepository.findTaskWithImage(createdById);
-//        for(Task task : tasks){
-//            task.setImageData(imageService.downloadImage(task.getId()));
-//        }
-//        return tasks;
-//    }
-
-
-//    public Map<Status, List<Task>> getTasksGroupedByStatusByCreatorId(Long createdById) {
-//        List<Task> tasksByCreator = getTasksByCreatorId(createdById);
-//        return groupTasksByStatus(tasksByCreator);
-//    }
-
-//    public List<Task> getTasksByCreatorId(Long createdById) {
-//        return taskRepository.findTasksByCreator(createdById);
-//    }

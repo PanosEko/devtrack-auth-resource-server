@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,8 @@ public class JwtService {
 
     private final TokenRepository tokenRepository;
 
-    private static final String SECRET_KEY = "b1055ab7abd4f6960fb1aea01c266f641a568efe4fd4071bac1c098333b31508";
+    @Value("${jwt.secret.key}")
+    private String secretKey;
 
     public JwtService(TokenRepository tokenRepository) {
         this.tokenRepository = tokenRepository;
@@ -69,12 +71,12 @@ public class JwtService {
 
     public boolean isAccessTokenValid(String token, UserDetails userDetails){
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
+        return (username.equals(userDetails.getUsername())) && isTokenExpired(token);
     }
 
     public boolean isRefreshTokenValid(String token, UserDetails userDetails){
         final String username = extractUsername(token);
-    return (username.equals(userDetails.getUsername())) && !isTokenExpired(token) && !isTokenRevoked(token);
+    return (username.equals(userDetails.getUsername())) && isTokenExpired(token) && !isTokenRevoked(token);
     }
 
     private boolean isTokenRevoked(String token) {
@@ -86,7 +88,12 @@ public class JwtService {
     }
 
     private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        if( !extractExpiration(token).before(new Date()) ){
+            System.out.println("Token is not expired");
+            return false;
+        }
+        System.out.println("Token is expired");
+        return true;
     }
 
     private Date extractExpiration(String token) {
@@ -103,21 +110,8 @@ public class JwtService {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
-//    public String extractTokenFromCookie(String cookieHeader) {
-//        String jwtToken = null;
-//        String[] cookies = cookieHeader.split("; ");
-//        for (String cookie : cookies) {
-//            if (cookie.startsWith("token=")) {
-//                jwtToken = cookie.substring(6);
-//                break;
-//            }
-//        }
-//        return jwtToken;
-//    }
-
 
 }

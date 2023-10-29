@@ -1,7 +1,7 @@
 package com.panoseko.devtrack.config;
 
-import com.panoseko.devtrack.auth.AuthenticationService;
 import com.panoseko.devtrack.auth.CookieUtils;
+import com.panoseko.devtrack.token.Token;
 import com.panoseko.devtrack.token.TokenRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,14 +12,29 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
+import org.springframework.beans.factory.annotation.Value;
+
 
 @Service
 @RequiredArgsConstructor
 public class LogOutService implements LogoutHandler {
 
+    @Value("${access.token.cookie.name}")
+    private String accessTokenCookieName;
+
+    @Value("${refresh.token.cookie.name}")
+    private String refreshTokenCookieName;
+
+    @Value("${access.token.path}")
+    private String accessTokenPath;
+
+    @Value("${refresh.token.path}")
+    private String refreshTokenPath;
+
+    @Value("${cookie.domain}")
+    private String cookieDomain;
+
     private final TokenRepository tokenRepository;
-
-
 
     @Override
     public void logout(
@@ -27,53 +42,29 @@ public class LogOutService implements LogoutHandler {
             HttpServletResponse response,
             Authentication authentication
     ) {
-//        String cookieHeader = request.getHeader("Cookie");
-//        String jwtToken = jwtService.extractTokenFromCookie(cookieHeader);
-        String refreshToken = CookieUtils.readServletCookie(request, "refresh-token").orElse(null);//        String jwtToken = null;
-//        Cookie[] cookies = request.getCookies();
-//        if (cookies != null) {
-//            System.out.println("Logout Cookies found");
-//            for (Cookie cookie : cookies) {
-//                if (cookie.getName().equals("token")) {
-//                    jwtToken = cookie.getValue();
-//                    System.out.println("Logout Cookie found/n");
-//                    break;
-//                }
-//            }
-//        }
-
-        var storedToken = tokenRepository.findByToken(refreshToken)
-                .orElse(null);
+        String refreshToken = CookieUtils.readServletCookie(request, "refresh-token").orElse(null);
+        Token storedToken = tokenRepository.findByToken(refreshToken).orElse(null);
         if (storedToken != null) {
-            System.out.println("Stored token found");
             storedToken.setExpired(true);
             storedToken.setRevoked(true);
             tokenRepository.save(storedToken);
-            SecurityContextHolder.clearContext();
         }
+        SecurityContextHolder.clearContext();
 
-        // TODO send new cookie to delete old one
-        Cookie deleteCookie = CookieUtils.generateCookie(
-                "access-token",
+        Cookie deleteAccessCookie = CookieUtils.generateCookie(
+                accessTokenCookieName,
                 null,
-                "/api/v1/task",
-                "devtrack-backend.onrender.com",
+                accessTokenPath,
+                cookieDomain,
+                0);
+        Cookie deleteRefreshCookie = CookieUtils.generateCookie(
+                refreshTokenCookieName,
+                null,
+                refreshTokenPath,
+                cookieDomain,
                 0); // 5 days
-
-//        // Create a new cookie with the expired token
-//        Cookie newCookie = createTokenCookie(storedToken.getToken());
-//
-//        // Invalidate the existing cookie
-//        Cookie existingCookie = new Cookie("token", "");
-//        existingCookie.setMaxAge(0);
-//        existingCookie.setPath("/");
-//        existingCookie.setDomain("localhost");
-//
-//        // Add the new cookie to the response
-//        response.addCookie(newCookie);
-        response.addCookie(deleteCookie);
-
-    // Send response indicating logout success
+        response.addCookie(deleteRefreshCookie);
+        response.addCookie(deleteAccessCookie);
         response.setStatus(HttpServletResponse.SC_OK);
         try {
             response.getWriter().flush();
