@@ -71,12 +71,12 @@ public class JwtService {
 
     public boolean isAccessTokenValid(String token, UserDetails userDetails){
         final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername())) && isTokenExpired(token);
+        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
     public boolean isRefreshTokenValid(String token, UserDetails userDetails){
         final String username = extractUsername(token);
-    return (username.equals(userDetails.getUsername())) && isTokenExpired(token) && !isTokenRevoked(token);
+    return (username.equals(userDetails.getUsername())) && !isTokenExpired(token) && !isTokenRevoked(token);
     }
 
     private boolean isTokenRevoked(String token) {
@@ -88,12 +88,7 @@ public class JwtService {
     }
 
     private boolean isTokenExpired(String token) {
-        if( !extractExpiration(token).before(new Date()) ){
-            System.out.println("Token is not expired");
-            return false;
-        }
-        System.out.println("Token is expired");
-        return true;
+        return extractExpiration(token).before(new Date());
     }
 
     private Date extractExpiration(String token) {
