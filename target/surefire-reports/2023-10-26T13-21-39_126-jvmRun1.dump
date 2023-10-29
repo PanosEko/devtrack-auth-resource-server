@@ -1,0 +1,160 @@
+# Created at 2023-10-26T13:21:40.015
+Exiting self fork JVM. Received SHUTDOWN command from Maven shutdown hook.
+Thread dump before exiting the process (13116@LAPTOP-5TERU5MB):
+"main" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@20.0.2/java.security.AccessController.checkPermission(AccessController.java:1070)
+        at app//ch.qos.logback.core.util.Loader$1.run(Loader.java:48)
+        at app//ch.qos.logback.core.util.Loader$1.run(Loader.java:45)
+        at java.base@20.0.2/java.security.AccessController.executePrivileged(AccessController.java:778)
+        at java.base@20.0.2/java.security.AccessController.doPrivileged(AccessController.java:319)
+        at app//ch.qos.logback.core.util.Loader.<clinit>(Loader.java:45)
+        at app//ch.qos.logback.classic.joran.SerializedModelConfigurator.performMultiStepModelFileSearch(SerializedModelConfigurator.java:119)
+        at app//ch.qos.logback.classic.joran.SerializedModelConfigurator.configure(SerializedModelConfigurator.java:59)
+        at app//ch.qos.logback.classic.util.ContextInitializer.invokeConfigure(ContextInitializer.java:122)
+        at app//ch.qos.logback.classic.util.ContextInitializer.autoConfig(ContextInitializer.java:97)
+        at app//ch.qos.logback.classic.util.ContextInitializer.autoConfig(ContextInitializer.java:65)
+        at app//ch.qos.logback.classic.spi.LogbackServiceProvider.initializeLoggerContext(LogbackServiceProvider.java:52)
+        at app//ch.qos.logback.classic.spi.LogbackServiceProvider.initialize(LogbackServiceProvider.java:41)
+        at app//org.slf4j.LoggerFactory.bind(LoggerFactory.java:183)
+        at app//org.slf4j.LoggerFactory.performInitialization(LoggerFactory.java:170)
+        at app//org.slf4j.LoggerFactory.getProvider(LoggerFactory.java:455)
+        at app//org.slf4j.LoggerFactory.getILoggerFactory(LoggerFactory.java:441)
+        at app//org.slf4j.LoggerFactory.getLogger(LoggerFactory.java:390)
+        at app//org.apache.commons.logging.LogAdapter$Slf4jAdapter.createLocationAwareLog(LogAdapter.java:121)
+        at app//org.apache.commons.logging.LogAdapter$$Lambda$362/0x000001d5598b8a00.apply(Unknown Source)
+        at app//org.apache.commons.logging.LogAdapter.createLog(LogAdapter.java:95)
+        at app//org.apache.commons.logging.LogFactory.getLog(LogFactory.java:67)
+        at app//org.apache.commons.logging.LogFactory.getLog(LogFactory.java:59)
+        at app//org.springframework.test.context.TestContextManager.<clinit>(TestContextManager.java:91)
+        at app//org.springframework.test.context.junit.jupiter.SpringExtension$$Lambda$360/0x000001d5598b6950.apply(Unknown Source)
+        at app//org.junit.jupiter.engine.execution.ExtensionValuesStore.lambda$getOrComputeIfAbsent$4(ExtensionValuesStore.java:86)
+        at app//org.junit.jupiter.engine.execution.ExtensionValuesStore$$Lambda$361/0x000001d5598b6fa0.get(Unknown Source)
+        at app//org.junit.jupiter.engine.execution.ExtensionValuesStore$MemoizingSupplier.computeValue(ExtensionValuesStore.java:223)
+        at app//org.junit.jupiter.engine.execution.ExtensionValuesStore$MemoizingSupplier.get(ExtensionValuesStore.java:211)
+        at app//org.junit.jupiter.engine.execution.ExtensionValuesStore$StoredValue.evaluate(ExtensionValuesStore.java:191)
+        at app//org.junit.jupiter.engine.execution.ExtensionValuesStore$StoredValue.access$100(ExtensionValuesStore.java:171)
+        at app//org.junit.jupiter.engine.execution.ExtensionValuesStore.getOrComputeIfAbsent(ExtensionValuesStore.java:89)
+        at app//org.junit.jupiter.engine.execution.ExtensionValuesStore.getOrComputeIfAbsent(ExtensionValuesStore.java:93)
+        at app//org.junit.jupiter.engine.execution.NamespaceAwareStore.getOrComputeIfAbsent(NamespaceAwareStore.java:61)
+        at app//org.springframework.test.context.junit.jupiter.SpringExtension.getTestContextManager(SpringExtension.java:294)
+        at app//org.springframework.test.context.junit.jupiter.SpringExtension.beforeAll(SpringExtension.java:113)
+        at app//org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeBeforeAllCallbacks$12(ClassBasedTestDescriptor.java:395)
+        at app//org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor$$Lambda$351/0x000001d5598b4cb0.execute(Unknown Source)
+        at app//org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+        at app//org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeBeforeAllCallbacks(ClassBasedTestDescriptor.java:395)
+        at app//org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.before(ClassBasedTestDescriptor.java:211)
+        at app//org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.before(ClassBasedTestDescriptor.java:84)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:148)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$291/0x000001d5598a74b0.execute(Unknown Source)
+        at app//org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$290/0x000001d5598a7298.invoke(Unknown Source)
+        at app//org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$289/0x000001d5598a6e90.execute(Unknown Source)
+        at app//org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+        at app//org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService$$Lambda$295/0x000001d5598a8000.accept(Unknown Source)
+        at java.base@20.0.2/java.util.ArrayList.forEach(ArrayList.java:1511)
+        at app//org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:155)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$291/0x000001d5598a74b0.execute(Unknown Source)
+        at app//org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:141)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$290/0x000001d5598a7298.invoke(Unknown Source)
+        at app//org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:139)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask$$Lambda$289/0x000001d5598a6e90.execute(Unknown Source)
+        at app//org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:138)
+        at app//org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:95)
+        at app//org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+        at app//org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+        at app//org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+        at app//org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:147)
+        at app//org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:127)
+        at app//org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:90)
+        at app//org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:55)
+        at app//org.junit.platform.launcher.core.EngineExecutionOrchestrator$$Lambda$244/0x000001d559897680.accept(Unknown Source)
+        at app//org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:102)
+        at app//org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:54)
+        at app//org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+        at app//org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:86)
+        at app//org.junit.platform.launcher.core.DefaultLauncherSession$DelegatingLauncher.execute(DefaultLauncherSession.java:86)
+        at app//org.apache.maven.surefire.junitplatform.LazyLauncher.execute(LazyLauncher.java:50)
+        at app//org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:184)
+        at app//org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:148)
+        at app//org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:122)
+        at app//org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+        at app//org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+        at app//org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+        at app//org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
+
+"Reference Handler" 
+   java.lang.Thread.State: RUNNABLE
+        at java.base@20.0.2/java.lang.ref.Reference.waitForReferencePendingList(Native Method)
+        at java.base@20.0.2/java.lang.ref.Reference.processPendingReferences(Reference.java:246)
+        at java.base@20.0.2/java.lang.ref.Reference$ReferenceHandler.run(Reference.java:208)
+
+"Finalizer" 
+   java.lang.Thread.State: WAITING
+        at java.base@20.0.2/java.lang.Object.wait0(Native Method)
+        at java.base@20.0.2/java.lang.Object.wait(Object.java:366)
+        at java.base@20.0.2/java.lang.Object.wait(Object.java:339)
+        at java.base@20.0.2/java.lang.ref.NativeReferenceQueue.await(NativeReferenceQueue.java:48)
+        at java.base@20.0.2/java.lang.ref.ReferenceQueue.remove0(ReferenceQueue.java:158)
+        at java.base@20.0.2/java.lang.ref.NativeReferenceQueue.remove(NativeReferenceQueue.java:89)
+        at java.base@20.0.2/java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:173)
+
+"Signal Dispatcher" 
+   java.lang.Thread.State: RUNNABLE
+
+"Attach Listener" 
+   java.lang.Thread.State: RUNNABLE
+
+"Notification Thread" 
+   java.lang.Thread.State: RUNNABLE
+
+"Common-Cleaner" 
+   java.lang.Thread.State: TIMED_WAITING
+        at java.base@20.0.2/jdk.internal.misc.Unsafe.park(Native Method)
+        at java.base@20.0.2/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:269)
+        at java.base@20.0.2/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.await(AbstractQueuedSynchronizer.java:1847)
+        at java.base@20.0.2/java.lang.ref.ReferenceQueue.await(ReferenceQueue.java:71)
+        at java.base@20.0.2/java.lang.ref.ReferenceQueue.remove0(ReferenceQueue.java:143)
+        at java.base@20.0.2/java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:218)
+        at java.base@20.0.2/jdk.internal.ref.CleanerImpl.run(CleanerImpl.java:140)
+        at java.base@20.0.2/java.lang.Thread.runWith(Thread.java:1636)
+        at java.base@20.0.2/java.lang.Thread.run(Thread.java:1623)
+        at java.base@20.0.2/jdk.internal.misc.InnocuousThread.run(InnocuousThread.java:186)
+
+"surefire-forkedjvm-stream-flusher" 
+   java.lang.Thread.State: TIMED_WAITING
+        at java.base@20.0.2/jdk.internal.misc.Unsafe.park(Native Method)
+        at java.base@20.0.2/java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:269)
+        at java.base@20.0.2/java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject.awaitNanos(AbstractQueuedSynchronizer.java:1758)
+        at java.base@20.0.2/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:1182)
+        at java.base@20.0.2/java.util.concurrent.ScheduledThreadPoolExecutor$DelayedWorkQueue.take(ScheduledThreadPoolExecutor.java:899)
+        at java.base@20.0.2/java.util.concurrent.ThreadPoolExecutor.getTask(ThreadPoolExecutor.java:1070)
+        at java.base@20.0.2/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1130)
+        at java.base@20.0.2/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base@20.0.2/java.lang.Thread.runWith(Thread.java:1636)
+        at java.base@20.0.2/java.lang.Thread.run(Thread.java:1623)
+
+"surefire-forkedjvm-command-thread" 
+   java.lang.Thread.State: RUNNABLE
+        at java.management@20.0.2/sun.management.ThreadImpl.getThreadInfo1(Native Method)
+        at java.management@20.0.2/sun.management.ThreadImpl.getThreadInfo(ThreadImpl.java:191)
+        at app//org.apache.maven.surefire.booter.ForkedBooter.generateThreadDump(ForkedBooter.java:579)
+        at app//org.apache.maven.surefire.booter.ForkedBooter.access$600(ForkedBooter.java:79)
+        at app//org.apache.maven.surefire.booter.ForkedBooter$4.update(ForkedBooter.java:315)
+        at app//org.apache.maven.surefire.booter.CommandReader$CommandRunnable.callListeners(CommandReader.java:357)
+        at app//org.apache.maven.surefire.booter.CommandReader$CommandRunnable.exitByConfiguration(CommandReader.java:367)
+        at app//org.apache.maven.surefire.booter.CommandReader$CommandRunnable.run(CommandReader.java:330)
+        at java.base@20.0.2/java.lang.Thread.runWith(Thread.java:1636)
+        at java.base@20.0.2/java.lang.Thread.run(Thread.java:1623)
+
+
+
