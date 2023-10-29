@@ -2,8 +2,6 @@ C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\auth\Authe
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\image\ImageService.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\token\TokenRepository.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\config\SecurityConfig.java
-C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\user\UserService.java
-C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\user\UserController.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\auth\CookieUtils.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\DevtrackApplication.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\task\Task.java
@@ -13,7 +11,6 @@ C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\auth\Regis
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\auth\AuthenticationController.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\user\UserRepository.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\config\LogOutService.java
-C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\config\CorsConfig.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\task\AddTaskRequest.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\task\TaskResponse.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\task\TaskService.java
@@ -21,7 +18,6 @@ C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\image\Imag
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\task\UpdateTaskRequest.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\auth\AuthenticationResponse.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\image\Image.java
-C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\user\UserConfig.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\config\JwtAuthenticationFilter.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\task\Status.java
 C:\Users\liber\Documents\devtrack\src\main\java\com\panoseko\devtrack\config\JwtService.java
