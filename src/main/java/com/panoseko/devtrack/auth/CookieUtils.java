@@ -13,6 +13,7 @@ public final class CookieUtils {
     public static Cookie generateCookie(String name, String value, String path, String domain, int maxAgeMinutes) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         cookie.setPath(path);
         cookie.setDomain(domain);
         cookie.setMaxAge( (int) (System.currentTimeMillis() + 1000 * 60 * maxAgeMinutes) / 1000);
