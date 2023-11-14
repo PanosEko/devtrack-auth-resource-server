@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/v1/task")
+@RequestMapping(path = "api/v1/resources/tasks")
 public class TaskController {
 
     private final TaskService taskService;
@@ -27,9 +27,9 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = {"multipart/form-data"})
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> addTask(@CookieValue(name = "access-token") String jwtToken,
-                                     @ModelAttribute AddTaskRequest addTaskRequest) {
+                                     @RequestBody AddTaskRequest addTaskRequest) {
         Long userId = jwtService.extractUserId(jwtToken);
         Long taskId = taskService.addTask(addTaskRequest, userId);
         return ResponseEntity.ok(taskId);

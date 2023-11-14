@@ -1,57 +1,52 @@
-//package com.panoseko.devtrack.image;
+package com.panoseko.devtrack.image;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequestMapping(path = "api/v1/resources/images")
+public class ImageController {
+
+    private ImageService service;
+
+    @Autowired
+    public ImageController(ImageService imageService) {
+       this.service = imageService;
+    }
+    @PostMapping
+    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
+        Long imageId = service.uploadImage(file);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(imageId);
+    }
+
+    @DeleteMapping("/{imageId}")
+    public ResponseEntity<?> deleteImage(@PathVariable Long imageId) {
+        service.deleteImageById(imageId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Image deleted successfully");
+    }
+
+    @GetMapping("/{imageId}")
+    public ResponseEntity<?> getImagePreview(@PathVariable Long imageId) {
+        ImagePreview imagePreview = service.getImagePreview(imageId);
+        return ResponseEntity.ok(imagePreview);
+    }
+
+//    @GetMapping("/{fileName}")
+//    public ResponseEntity<?> downloadImage(@PathVariable String fileName){
+//        byte[] imageData=service.downloadImage(fileName);
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .contentType(MediaType.valueOf("image/png"))
+//                .body(imageData);
 //
-//import com.panoseko.devtrack.config.JwtService;
-//import com.panoseko.devtrack.task.Task;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.http.MediaType;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.web.bind.annotation.*;
-//import org.springframework.web.multipart.MultipartFile;
-//
-//@RestController
-//@RequestMapping(path="api/v1/image")
-//public class ImageController {
-//
-//    private final ImageService imageService;
-//    private final JwtService jwtService;
-//
-//    public ImageController(ImageService imageService, JwtService jwtService) {
-//        this.imageService = imageService;
-//        this.jwtService = jwtService;
 //    }
-//
-////    @PostMapping
-////    public ResponseEntity<?> uploadImage(@CookieValue(name = "token") String jwtToken,
-////                                         @RequestParam("image")MultipartFile file) {
-////        if (jwtToken == null) {
-////            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-////        }
-////            try {
-////                imageService.uploadImage(file);
-////                return ResponseEntity.status(HttpStatus.OK)
-////                        .body("Image uploaded successfully");
-////            } catch (Exception e) {
-////                e.printStackTrace();
-////                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-////                        .body("Error uploading image");
-////            }
-////
-////    }
-//
-////    @GetMapping("/{fileName}")
-////    public ResponseEntity<?> downloadImage(@CookieValue(name = "token") String jwtToken, @PathVariable String fileName) {
-////        if (jwtToken == null) {
-////            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-////        }
-////        try {
-////            byte[] imageData = imageService.downloadImage(fileName);
-////            return ResponseEntity.status(HttpStatus.OK)
-////                    .contentType(MediaType.valueOf("image/png"))
-////                    .body(imageData);
-////        } catch (Exception e) {
-////            e.printStackTrace();
-////            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-////                    .body("Error downloading image");
-////        }
-////    }
-//}
+}

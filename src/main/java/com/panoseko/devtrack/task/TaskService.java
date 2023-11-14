@@ -1,6 +1,8 @@
 package com.panoseko.devtrack.task;
 
 import com.panoseko.devtrack.image.Image;
+import com.panoseko.devtrack.image.ImagePreview;
+import com.panoseko.devtrack.image.ImageRepository;
 import com.panoseko.devtrack.image.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,27 +15,30 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final ImageService imageService;
+    private final ImageRepository imageRepository;
 
 
     @Autowired
-    public TaskService(TaskRepository taskRepository, ImageService imageService) {
+    public TaskService(TaskRepository taskRepository, ImageService imageService, ImageRepository imageRepository) {
         this.taskRepository = taskRepository;
         this.imageService = imageService;
+        this.imageRepository = imageRepository;
     }
 
     public List<TaskResponse> getTasks(Long userId) {
         List<Task> tasks = taskRepository.findTasksByCreator(userId);
-        List<TaskResponse> tasksResponse = new ArrayList<>();
+        List<TaskResponse> tasksResponses = new ArrayList<>();
         for (Task task : tasks) {
             TaskResponse taskResponse = new TaskResponse(task);
             Image image = task.getImage();
             if (image != null) {
-                image.setImageData(imageService.decompressImageData(image.getImageData()));
-                taskResponse.setImage(image);
+                ImagePreview imagePreview = new ImagePreview(image.getId(),
+                        imageService.decompressImageData(image.getImagePreview()));
+                taskResponse.setImagePreview(imagePreview);
             }
-            tasksResponse.add(taskResponse);
+            tasksResponses.add(taskResponse);
         }
-        return tasksResponse;
+        return tasksResponses;
     }
 
     @Transactional
@@ -45,10 +50,11 @@ public class TaskService {
                 addTaskRequest.getCreatedAt(),
                 userId
         );
-        if (addTaskRequest.getImage() != null) {
+        if (addTaskRequest.getImageId() != null) {
             try {
-                System.out.println("image file is not null");
-                Image uploadedImage = imageService.uploadImage(addTaskRequest.getImage(), task);
+                Image uploadedImage = imageRepository.findById(addTaskRequest.getImageId())
+                        .orElseThrow(() -> new IllegalStateException("Image not found"));
+                uploadedImage.setTask(task); // Link the image with the task
                 task.setImage(uploadedImage);
             } catch (Exception e) {
                 // Handle the exception
@@ -86,21 +92,21 @@ public class TaskService {
                 updateTaskRequest.getCreatedAt(),
                 userId
         );
-        if (updateTaskRequest.getImage() != null) {
-            try {
-                System.out.println("image file is not null");
-                imageService.deleteImage(task.getId());
-                Image uploadedImage = imageService.uploadImage(updateTaskRequest.getImage(), task);
-                task.setImage(uploadedImage);
-            } catch (Exception e) {
-                // Handle the exception
-                e.printStackTrace();
-                throw new IllegalStateException("Error uploading image");
-            }
-        } else {
-            System.out.println("image file is null");
-            imageService.deleteImage(task.getId());
-        }
+//        if (updateTaskRequest.getImage() != null) {
+//            try {
+//                System.out.println("image file is not null");
+//                imageService.deleteImage(task.getId());
+//                Image uploadedImage = imageService.uploadImage(updateTaskRequest.getImage(), task);
+//                task.setImage(uploadedImage);
+//            } catch (Exception e) {
+//                // Handle the exception
+//                e.printStackTrace();
+//                throw new IllegalStateException("Error uploading image");
+//            }
+//        } else {
+//            System.out.println("image file is null");
+//            imageService.deleteImage(task.getId());
+//        }
         taskRepository.save(task);
     }
 }

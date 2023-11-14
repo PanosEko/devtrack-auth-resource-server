@@ -1,13 +1,9 @@
 package com.panoseko.devtrack.image;
 
-import com.panoseko.devtrack.task.Task;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -21,35 +17,38 @@ public class ImageService {
         this.imageRepository = imageRepository;
     }
 
-//    public Image uploadImage(MultipartFile file, Task task) throws IOException {
-//        Image image = imageRepository.save(Image.builder()
-//                .name(file.getOriginalFilename())
-//                .type(file.getContentType())
-//                .imageData(ImageUtils.compressImage(file.getBytes()))
-//                .task(task) // Set the task
-//                .build());
-//        if(image !=null){
-//            return image;
-//        }
-//        return null;
-//    }
-public Image uploadImage(MultipartFile file, Task task) throws IOException {
-    Image image = imageRepository.save(Image.builder()
-            .name(file.getOriginalFilename())
-            .type(file.getContentType())
-            .imageData(ImageUtils.compressImage(file.getBytes()))
-            .task(task) // Set the task
-            .build());
-    if(image !=null){
-        return image;
-    }
-    return null;
-}
 
-//public MultipartFile getImageFile(Image image){
-//    byte[] imageData = ImageUtils.decompressImage(image.getImageData());
+//public Image uploadImage(MultipartFile file, Task task) throws IOException {
+//    Image image = imageRepository.save(Image.builder()
+//            .name(file.getOriginalFilename())
+//            .type(file.getContentType())
+//            .imageData(ImageUtils.compressImage(file.getBytes()))
+//            .task(task) // Set the task
+//            .build());
+//    if(image !=null){
+//        return image;
+//    }
+//    return null;
 //}
 
+    public Long uploadImage(MultipartFile file) throws IOException {
+        byte[] originalImageData = file.getBytes();
+        byte[] previewImageData = ImageUtils.resizeImage(originalImageData);
+
+        Image image = imageRepository.save(Image.builder()
+                .name(file.getOriginalFilename())
+                .type(file.getContentType())
+                .imageData(ImageUtils.compressImage(originalImageData))
+                .imagePreview(ImageUtils.compressImage(previewImageData))
+                .build());
+        return image.getId();
+
+    }
+
+    public void deleteImageById(Long imageID){
+        Optional<Image> image = imageRepository.findById(imageID);
+        image.ifPresent(imageRepository::delete);
+    }
 
     public byte[] downloadImage(Long taskID){
         Optional<Image> image = imageRepository.findImageByTask(taskID);
@@ -69,4 +68,13 @@ public Image uploadImage(MultipartFile file, Task task) throws IOException {
         image.ifPresent(imageRepository::delete);
     }
 
+    public ImagePreview getImagePreview(Long imageId) {
+        Optional<Image> image = imageRepository.findById(imageId);
+        if (image.isPresent()) {
+            ImagePreview imagePreview = new ImagePreview(image.get().getId(),
+                    ImageUtils.decompressImage(image.get().getImagePreview()));
+            return imagePreview;
+        }
+        return null;
+    }
 }

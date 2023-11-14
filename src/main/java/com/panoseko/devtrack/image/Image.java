@@ -28,6 +28,11 @@ public class Image {
     @Column(name= "image_data", length = 10000)
     private byte[] imageData;
 
+    @Lob
+    @JdbcType(VarbinaryJdbcType.class)
+    @Column(name= "image_preview", length = 10000)
+    private byte[] imagePreview;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id")
     private Task task;

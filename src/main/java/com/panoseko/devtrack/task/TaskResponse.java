@@ -1,6 +1,7 @@
 package com.panoseko.devtrack.task;
 
 import com.panoseko.devtrack.image.Image;
+import com.panoseko.devtrack.image.ImagePreview;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ public class TaskResponse {
     private Status status;
     private LocalDate createdAt;
     private Long createdById;
-    private Image image;
+    private ImagePreview imagePreview;
 
 
     public TaskResponse(Task task){

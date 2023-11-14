@@ -15,5 +15,5 @@ public class AddTaskRequest {
     private String description;
     private Status status;
     private LocalDate createdAt;
-    private MultipartFile image;
+    private Long imageId;
 }
