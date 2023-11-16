@@ -2,14 +2,11 @@ package com.panoseko.devtrack.image;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping(path = "api/v1/resources/images")
@@ -23,22 +20,24 @@ public class ImageController {
     }
     @PostMapping
     public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
-        Long imageId = service.uploadImage(file);
+        Image image = service.uploadImage(file);
+        ThumbnailDTO thumbnail = new ThumbnailDTO(image.getId().toString(),
+                ImageUtils.decompressImage(image.getThumbnailData()));
         return ResponseEntity.status(HttpStatus.OK)
-                .body(imageId);
+                .body(thumbnail);
     }
 
     @DeleteMapping("/{imageId}")
     public ResponseEntity<?> deleteImage(@PathVariable Long imageId) {
-        service.deleteImageById(imageId);
+        service.deleteImage(imageId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body("Image deleted successfully");
     }
 
     @GetMapping("/{imageId}")
-    public ResponseEntity<?> getImagePreview(@PathVariable Long imageId) {
-        ImagePreview imagePreview = service.getImagePreview(imageId);
-        return ResponseEntity.ok(imagePreview);
+    public ResponseEntity<?> getThumbnail(@PathVariable Long imageId) {
+        ThumbnailDTO thumbnail = service.getThumbnail(imageId);
+        return ResponseEntity.ok(thumbnail);
     }
 
 //    @GetMapping("/{fileName}")

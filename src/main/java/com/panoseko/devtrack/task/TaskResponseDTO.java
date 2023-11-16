@@ -1,7 +1,6 @@
 package com.panoseko.devtrack.task;
 
-import com.panoseko.devtrack.image.Image;
-import com.panoseko.devtrack.image.ImagePreview;
+import com.panoseko.devtrack.image.ThumbnailDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaskResponse {
+public class TaskResponseDTO {
 
     private Long id;
     private String title;
@@ -19,10 +18,10 @@ public class TaskResponse {
     private Status status;
     private LocalDate createdAt;
     private Long createdById;
-    private ImagePreview imagePreview;
+    private ThumbnailDTO thumbnail;
 
 
-    public TaskResponse(Task task){
+    public TaskResponseDTO(Task task){
         this.id = task.getId();
         this.title = task.getTitle();
         this.description = task.getDescription();

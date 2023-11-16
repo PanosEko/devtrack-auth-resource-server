@@ -21,15 +21,16 @@ public class TaskController {
 
 
     @GetMapping()
-    public ResponseEntity<List<TaskResponse>> getTasksByCreatorId(@CookieValue(name = "access-token") String jwtToken) {
+    public ResponseEntity<List<TaskResponseDTO>> getTasksByCreatorId(@CookieValue(name = "access-token") String jwtToken) {
         Long userId = jwtService.extractUserId(jwtToken);
-        List<TaskResponse> tasks = taskService.getTasks(userId);
+        List<TaskResponseDTO> tasks = taskService.getTasks(userId);
+        System.out.println(tasks);
         return ResponseEntity.ok(tasks);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> addTask(@CookieValue(name = "access-token") String jwtToken,
-                                     @RequestBody AddTaskRequest addTaskRequest) {
+                                     @RequestBody AddTaskRequestDTO addTaskRequest) {
         Long userId = jwtService.extractUserId(jwtToken);
         Long taskId = taskService.addTask(addTaskRequest, userId);
         return ResponseEntity.ok(taskId);
@@ -43,7 +44,7 @@ public class TaskController {
 
     @RequestMapping(method = RequestMethod.PUT, consumes = {"multipart/form-data"})
     public ResponseEntity<?> updateTask(@CookieValue(name = "access-token") String jwtToken,
-                                        @ModelAttribute UpdateTaskRequest updateTaskRequest) {
+                                        @ModelAttribute UpdateTaskRequestDTO updateTaskRequest) {
         Long userId = jwtService.extractUserId(jwtToken);
         taskService.updateTask(updateTaskRequest, userId);
         return ResponseEntity.ok("Task updated successfully");

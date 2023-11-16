@@ -6,7 +6,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Base64;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 

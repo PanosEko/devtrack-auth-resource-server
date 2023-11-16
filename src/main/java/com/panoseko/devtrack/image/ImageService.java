@@ -31,21 +31,21 @@ public class ImageService {
 //    return null;
 //}
 
-    public Long uploadImage(MultipartFile file) throws IOException {
+    public Image uploadImage(MultipartFile file) throws IOException {
         byte[] originalImageData = file.getBytes();
-        byte[] previewImageData = ImageUtils.resizeImage(originalImageData);
+        byte[] thumbnailData = ImageUtils.resizeImage(originalImageData);
 
         Image image = imageRepository.save(Image.builder()
                 .name(file.getOriginalFilename())
                 .type(file.getContentType())
                 .imageData(ImageUtils.compressImage(originalImageData))
-                .imagePreview(ImageUtils.compressImage(previewImageData))
+                .thumbnailData(ImageUtils.compressImage(thumbnailData))
                 .build());
-        return image.getId();
+        return image;
 
     }
 
-    public void deleteImageById(Long imageID){
+    public void deleteImage(Long imageID){
         Optional<Image> image = imageRepository.findById(imageID);
         image.ifPresent(imageRepository::delete);
     }
@@ -63,17 +63,17 @@ public class ImageService {
     }
 
 
-    public void deleteImage(Long taskID){
+    public void deleteImageByTaskId(Long taskID){
         Optional<Image> image = imageRepository.findImageByTask(taskID);
         image.ifPresent(imageRepository::delete);
     }
 
-    public ImagePreview getImagePreview(Long imageId) {
+    public ThumbnailDTO getThumbnail(Long imageId) {
         Optional<Image> image = imageRepository.findById(imageId);
         if (image.isPresent()) {
-            ImagePreview imagePreview = new ImagePreview(image.get().getId(),
-                    ImageUtils.decompressImage(image.get().getImagePreview()));
-            return imagePreview;
+            ThumbnailDTO thumbnail = new ThumbnailDTO(image.get().getId().toString(),
+                    ImageUtils.decompressImage(image.get().getThumbnailData()));
+            return thumbnail;
         }
         return null;
     }

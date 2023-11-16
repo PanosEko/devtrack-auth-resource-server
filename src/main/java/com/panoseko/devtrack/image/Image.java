@@ -30,8 +30,8 @@ public class Image {
 
     @Lob
     @JdbcType(VarbinaryJdbcType.class)
-    @Column(name= "image_preview", length = 10000)
-    private byte[] imagePreview;
+    @Column(name= "thumbnail", length = 10000)
+    private byte[] thumbnailData;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "task_id")
