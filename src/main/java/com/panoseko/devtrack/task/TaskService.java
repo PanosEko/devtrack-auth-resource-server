@@ -75,7 +75,6 @@ public class TaskService {
                 uploadedImage.setTask(task); // Link the image with the task
                 task.setImage(uploadedImage);
             } catch (Exception e) {
-                // Handle the exception
                 e.printStackTrace();
                 throw new IllegalStateException("Error uploading image");
             }
@@ -103,9 +102,6 @@ public class TaskService {
                 e.printStackTrace();
                 throw new IllegalStateException("Error uploading image");
             }
-        } else {
-            System.out.println("image file is null");
-            imageService.deleteImageByTaskId(task.getId());
         }
         taskRepository.save(task);
     }

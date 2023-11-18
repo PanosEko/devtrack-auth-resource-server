@@ -1,12 +1,14 @@
 package com.panoseko.devtrack.image;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Base64;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/v1/resources/images")
@@ -36,16 +38,21 @@ public class ImageController {
 
     @GetMapping("/{imageId}")
     public ResponseEntity<?> getThumbnail(@PathVariable Long imageId) {
-        ThumbnailDTO thumbnail = service.getThumbnail(imageId);
+        Optional<ThumbnailDTO> thumbnail = service.getThumbnail(imageId);
         return ResponseEntity.ok(thumbnail);
     }
 
-//    @GetMapping("/{fileName}")
-//    public ResponseEntity<?> downloadImage(@PathVariable String fileName){
-//        byte[] imageData=service.downloadImage(fileName);
-//        return ResponseEntity.status(HttpStatus.OK)
-//                .contentType(MediaType.valueOf("image/png"))
-//                .body(imageData);
-//
-//    }
+    @GetMapping("download/{imageId}")
+    public ResponseEntity<?> downloadImage(@PathVariable Long imageId) {
+        Image image = service.downloadImage(imageId);
+        String base64ImageData = Base64.getEncoder().encodeToString(image.getImageData());
+        MediaType mediaType = MediaType.parseMediaType(image.getType());
+        return ResponseEntity.ok()
+                .contentType(mediaType)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment()
+                                .filename(image.getName())
+                                .build().toString())
+                .body(base64ImageData);
+    }
 }

@@ -17,31 +17,16 @@ public class ImageService {
         this.imageRepository = imageRepository;
     }
 
-
-//public Image uploadImage(MultipartFile file, Task task) throws IOException {
-//    Image image = imageRepository.save(Image.builder()
-//            .name(file.getOriginalFilename())
-//            .type(file.getContentType())
-//            .imageData(ImageUtils.compressImage(file.getBytes()))
-//            .task(task) // Set the task
-//            .build());
-//    if(image !=null){
-//        return image;
-//    }
-//    return null;
-//}
-
     public Image uploadImage(MultipartFile file) throws IOException {
         byte[] originalImageData = file.getBytes();
-        byte[] thumbnailData = ImageUtils.resizeImage(originalImageData);
+        byte[] thumbnailData = ImageUtils.resizeImage(originalImageData, file.getContentType());
 
-        Image image = imageRepository.save(Image.builder()
+        return imageRepository.save(Image.builder()
                 .name(file.getOriginalFilename())
                 .type(file.getContentType())
                 .imageData(ImageUtils.compressImage(originalImageData))
                 .thumbnailData(ImageUtils.compressImage(thumbnailData))
                 .build());
-        return image;
 
     }
 
@@ -50,10 +35,12 @@ public class ImageService {
         image.ifPresent(imageRepository::delete);
     }
 
-    public byte[] downloadImage(Long taskID){
-        Optional<Image> image = imageRepository.findImageByTask(taskID);
-        if (image.isPresent()) {
-            return ImageUtils.decompressImage(image.get().getImageData());
+    public Image downloadImage(Long imageId) {
+        Optional<Image> optionalImage = imageRepository.findById(imageId);
+        if (optionalImage.isPresent()) {
+            Image image = optionalImage.get();
+            image.setImageData(ImageUtils.decompressImage(image.getImageData()));
+            return image;
         }
         return null;
     }
@@ -62,19 +49,17 @@ public class ImageService {
         return ImageUtils.decompressImage(imageData);
     }
 
-
     public void deleteImageByTaskId(Long taskID){
         Optional<Image> image = imageRepository.findImageByTask(taskID);
         image.ifPresent(imageRepository::delete);
     }
 
-    public ThumbnailDTO getThumbnail(Long imageId) {
-        Optional<Image> image = imageRepository.findById(imageId);
-        if (image.isPresent()) {
-            ThumbnailDTO thumbnail = new ThumbnailDTO(image.get().getId().toString(),
-                    ImageUtils.decompressImage(image.get().getThumbnailData()));
-            return thumbnail;
-        }
-        return null;
+    public Optional<ThumbnailDTO> getThumbnail(Long imageId) {
+        return imageRepository.findById(imageId)
+                .map(image -> new ThumbnailDTO(
+                        image.getId().toString(),
+                        ImageUtils.decompressImage(image.getThumbnailData())
+                ));
     }
+
 }

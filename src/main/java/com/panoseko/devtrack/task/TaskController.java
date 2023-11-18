@@ -24,7 +24,6 @@ public class TaskController {
     public ResponseEntity<List<TaskResponseDTO>> getTasksByCreatorId(@CookieValue(name = "access-token") String jwtToken) {
         Long userId = jwtService.extractUserId(jwtToken);
         List<TaskResponseDTO> tasks = taskService.getTasks(userId);
-        System.out.println(tasks);
         return ResponseEntity.ok(tasks);
     }
 

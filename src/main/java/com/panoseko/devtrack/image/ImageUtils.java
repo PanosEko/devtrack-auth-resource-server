@@ -47,9 +47,12 @@ public class ImageUtils {
         return outputStream.toByteArray();
     }
 
-    public static byte[] resizeImage(byte[] imageData) throws IOException {
+    public static byte[] resizeImage(byte[] imageData, String imageType) throws IOException {
         int maxDimension = 500;
-
+        imageType = imageType.split("/")[1];
+        if (imageType.equals("png")) {
+            return imageData;
+        }
         // Create a ByteArrayInputStream from the imageData byte array
         ByteArrayInputStream inputStream = new ByteArrayInputStream(imageData);
 
@@ -59,6 +62,13 @@ public class ImageUtils {
         // Determine the new dimensions while maintaining the aspect ratio
         int originalWidth = originalImage.getWidth();
         int originalHeight = originalImage.getHeight();
+
+        // Check if the original dimensions are smaller than the maximum dimension
+        if (originalWidth <= maxDimension && originalHeight <= maxDimension) {
+            // Return the original image data without resizing
+            return imageData;
+        }
+
         int newWidth;
         int newHeight;
 
@@ -80,7 +90,7 @@ public class ImageUtils {
 
         // Write the resized image to a ByteArrayOutputStream
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        ImageIO.write(resizedImage, "jpg", outputStream);
+        ImageIO.write(resizedImage, imageType, outputStream);
 
         // Close the input and output streams
         inputStream.close();
