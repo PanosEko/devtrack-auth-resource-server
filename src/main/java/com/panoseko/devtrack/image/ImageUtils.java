@@ -100,27 +100,4 @@ public class ImageUtils {
         return outputStream.toByteArray();
     }
 
-
-//    public static File convertImageToBlobFile(Image image) {
-//        byte[] imageData = Base64.getDecoder().decode(image.getImageData());
-//        try {
-//            File imageFile = File.createTempFile(image.getName(), null);
-//            try (FileOutputStream fos = new FileOutputStream(imageFile)) {
-//                fos.write(imageData);
-//            }
-//            return imageFile;
-//        }catch (IOException e){
-//            e.printStackTrace();
-//            return null;
-//        }
-//    }
-
-//        public static File convertImageToFile(Image image) throws IOException {
-//            File file = new File(image.getName());
-//            try (FileOutputStream fos = new FileOutputStream(file)) {
-//                fos.write(image.getImageData());
-//            }
-//            return file;
-//        }
-
 }
