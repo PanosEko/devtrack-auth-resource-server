@@ -41,10 +41,19 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(method = RequestMethod.PUT, consumes = {"multipart/form-data"})
+//    @RequestMapping(method = RequestMethod.PUT, consumes = {"multipart/form-data"})
+//    public ResponseEntity<?> updateTask(@CookieValue(name = "access-token") String jwtToken,
+//                                        @ModelAttribute UpdateTaskRequestDTO updateTaskRequest) {
+//        Long userId = jwtService.extractUserId(jwtToken);
+//        taskService.updateTask(updateTaskRequest, userId);
+//        return ResponseEntity.ok("Task updated successfully");
+//    }
+
+    @PutMapping()
     public ResponseEntity<?> updateTask(@CookieValue(name = "access-token") String jwtToken,
-                                        @ModelAttribute UpdateTaskRequestDTO updateTaskRequest) {
+                                        @RequestBody UpdateTaskRequestDTO updateTaskRequest) {
         Long userId = jwtService.extractUserId(jwtToken);
+        System.out.println(updateTaskRequest);
         taskService.updateTask(updateTaskRequest, userId);
         return ResponseEntity.ok("Task updated successfully");
     }
