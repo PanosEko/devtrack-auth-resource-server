@@ -22,8 +22,11 @@ public class DevtrackApplication {
 			public void addCorsMappings(@NonNull CorsRegistry registry) {
 				registry.addMapping("/**")
 						.allowedMethods("*")
+						.allowedOrigins("http://localhost:3000")
 						.allowedOrigins("https://devtrack.dedyn.io")
 						.allowedHeaders("*")
+//						.allowedHeaders("Content-Type, Access-Control-Allow-Headers, Access-Control-Expose-Headers, Content-Disposition, Authorization, X-Requested-With, Access-Control-Allow-Origin")
+						.exposedHeaders("Content-Disposition")
 						.allowCredentials(true)
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						.allowedOriginPatterns("*")

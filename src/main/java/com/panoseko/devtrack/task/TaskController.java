@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/v1/task")
+@RequestMapping(path = "api/v1/resources/tasks")
 public class TaskController {
 
     private final TaskService taskService;
@@ -21,15 +21,15 @@ public class TaskController {
 
 
     @GetMapping()
-    public ResponseEntity<List<TaskResponse>> getTasksByCreatorId(@CookieValue(name = "access-token") String jwtToken) {
+    public ResponseEntity<List<TaskResponseDTO>> getTasksByCreatorId(@CookieValue(name = "access-token") String jwtToken) {
         Long userId = jwtService.extractUserId(jwtToken);
-        List<TaskResponse> tasks = taskService.getTasks(userId);
+        List<TaskResponseDTO> tasks = taskService.getTasks(userId);
         return ResponseEntity.ok(tasks);
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = {"multipart/form-data"})
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> addTask(@CookieValue(name = "access-token") String jwtToken,
-                                     @ModelAttribute AddTaskRequest addTaskRequest) {
+                                     @RequestBody AddTaskRequestDTO addTaskRequest) {
         Long userId = jwtService.extractUserId(jwtToken);
         Long taskId = taskService.addTask(addTaskRequest, userId);
         return ResponseEntity.ok(taskId);
@@ -41,10 +41,19 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    @RequestMapping(method = RequestMethod.PUT, consumes = {"multipart/form-data"})
+//    @RequestMapping(method = RequestMethod.PUT, consumes = {"multipart/form-data"})
+//    public ResponseEntity<?> updateTask(@CookieValue(name = "access-token") String jwtToken,
+//                                        @ModelAttribute UpdateTaskRequestDTO updateTaskRequest) {
+//        Long userId = jwtService.extractUserId(jwtToken);
+//        taskService.updateTask(updateTaskRequest, userId);
+//        return ResponseEntity.ok("Task updated successfully");
+//    }
+
+    @PutMapping()
     public ResponseEntity<?> updateTask(@CookieValue(name = "access-token") String jwtToken,
-                                        @ModelAttribute UpdateTaskRequest updateTaskRequest) {
+                                        @RequestBody UpdateTaskRequestDTO updateTaskRequest) {
         Long userId = jwtService.extractUserId(jwtToken);
+        System.out.println(updateTaskRequest);
         taskService.updateTask(updateTaskRequest, userId);
         return ResponseEntity.ok("Task updated successfully");
     }

@@ -1,6 +1,8 @@
 package com.panoseko.devtrack.task;
 
 import com.panoseko.devtrack.image.Image;
+import com.panoseko.devtrack.image.ThumbnailDTO;
+import com.panoseko.devtrack.image.ImageRepository;
 import com.panoseko.devtrack.image.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,55 +15,37 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
     private final ImageService imageService;
+    private final ImageRepository imageRepository;
 
 
     @Autowired
-    public TaskService(TaskRepository taskRepository, ImageService imageService) {
+    public TaskService(TaskRepository taskRepository, ImageService imageService, ImageRepository imageRepository) {
         this.taskRepository = taskRepository;
         this.imageService = imageService;
+        this.imageRepository = imageRepository;
     }
 
-    public List<TaskResponse> getTasks(Long userId) {
+    public List<TaskResponseDTO> getTasks(Long userId) {
         List<Task> tasks = taskRepository.findTasksByCreator(userId);
-        List<TaskResponse> tasksResponse = new ArrayList<>();
+        List<TaskResponseDTO> tasksResponses = new ArrayList<>();
         for (Task task : tasks) {
-            TaskResponse taskResponse = new TaskResponse(task);
+            TaskResponseDTO taskResponse = new TaskResponseDTO(task);
             Image image = task.getImage();
             if (image != null) {
-                image.setImageData(imageService.decompressImageData(image.getImageData()));
-                taskResponse.setImage(image);
+                ThumbnailDTO thumbnail = new ThumbnailDTO(image.getId().toString(),
+                        imageService.decompressImageData(image.getThumbnailData()));
+                taskResponse.setThumbnail(thumbnail);
             }
-            tasksResponse.add(taskResponse);
+            tasksResponses.add(taskResponse);
         }
-        return tasksResponse;
+        return tasksResponses;
     }
 
-    @Transactional
-    public Long addTask(AddTaskRequest addTaskRequest, Long userId) {
-        Task task = new Task(
-                addTaskRequest.getTitle(),
-                addTaskRequest.getDescription(),
-                addTaskRequest.getStatus(),
-                addTaskRequest.getCreatedAt(),
-                userId
-        );
-        if (addTaskRequest.getImage() != null) {
-            try {
-                System.out.println("image file is not null");
-                Image uploadedImage = imageService.uploadImage(addTaskRequest.getImage(), task);
-                task.setImage(uploadedImage);
-            } catch (Exception e) {
-                // Handle the exception
-                e.printStackTrace();
-                throw new IllegalStateException("Error uploading image");
-            }
-        }
-        return taskRepository.save(task).getId();
-    }
+
 
     public void deleteTask(Long taskId) {
         if (taskRepository.existsById(taskId)) {
-            imageService.deleteImage(taskId);
+            imageService.deleteImageByTaskId(taskId);
             taskRepository.deleteById(taskId);
         } else {
             throw new IllegalStateException("Task with id " + taskId + " does not exist");
@@ -75,9 +59,31 @@ public class TaskService {
         taskRepository.save(task);
     }
 
+    @Transactional
+    public Long addTask(AddTaskRequestDTO addTaskRequest, Long userId) {
+        Task task = new Task(
+                addTaskRequest.getTitle(),
+                addTaskRequest.getDescription(),
+                addTaskRequest.getStatus(),
+                addTaskRequest.getCreatedAt(),
+                userId
+        );
+        if (addTaskRequest.getImageId() != null) {
+            try {
+                Image uploadedImage = imageRepository.findById(addTaskRequest.getImageId())
+                        .orElseThrow(() -> new IllegalStateException("Image not found"));
+                uploadedImage.setTask(task); // Link the image with the task
+                task.setImage(uploadedImage);
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new IllegalStateException("Error uploading image");
+            }
+        }
+        return taskRepository.save(task).getId();
+    }
+
     //    @Transactional
-    public void updateTask(UpdateTaskRequest updateTaskRequest, Long userId) {
-        System.out.println("Update task id: " + updateTaskRequest.getId());
+    public void updateTask(UpdateTaskRequestDTO updateTaskRequest, Long userId) {
         Task task = new Task(
                 updateTaskRequest.getId(),
                 updateTaskRequest.getTitle(),
@@ -86,20 +92,16 @@ public class TaskService {
                 updateTaskRequest.getCreatedAt(),
                 userId
         );
-        if (updateTaskRequest.getImage() != null) {
+        if (updateTaskRequest.getImageId() != null) {
             try {
-                System.out.println("image file is not null");
-                imageService.deleteImage(task.getId());
-                Image uploadedImage = imageService.uploadImage(updateTaskRequest.getImage(), task);
+                Image uploadedImage = imageRepository.findById(updateTaskRequest.getImageId())
+                        .orElseThrow(() -> new IllegalStateException("Image not found"));
+                uploadedImage.setTask(task); // Link the image with the task
                 task.setImage(uploadedImage);
             } catch (Exception e) {
-                // Handle the exception
                 e.printStackTrace();
                 throw new IllegalStateException("Error uploading image");
             }
-        } else {
-            System.out.println("image file is null");
-            imageService.deleteImage(task.getId());
         }
         taskRepository.save(task);
     }

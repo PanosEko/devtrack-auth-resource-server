@@ -1,7 +1,6 @@
 package com.panoseko.devtrack.config;
 
 import com.panoseko.devtrack.auth.CookieUtils;
-import com.panoseko.devtrack.token.Token;
 import com.panoseko.devtrack.token.TokenRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
