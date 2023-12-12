@@ -82,18 +82,19 @@ public class TaskService {
         return taskRepository.save(task).getId();
     }
 
-    //    @Transactional
     public void updateTask(UpdateTaskRequestDTO updateTaskRequest, Long userId) {
-        Task task = new Task(
-                updateTaskRequest.getId(),
-                updateTaskRequest.getTitle(),
-                updateTaskRequest.getDescription(),
-                updateTaskRequest.getStatus(),
-                updateTaskRequest.getCreatedAt(),
-                userId
-        );
+        Task task = taskRepository.findById(updateTaskRequest.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+
+        // Update the task properties
+        task.setTitle(updateTaskRequest.getTitle());
+        task.setDescription(updateTaskRequest.getDescription());
+        task.setStatus(updateTaskRequest.getStatus());
+        task.setCreatedAt(updateTaskRequest.getCreatedAt());
         if (updateTaskRequest.getImageId() != null) {
             try {
+                // Delete the old image if it exists
+                imageRepository.findImageByTask(task.getId()).ifPresent(oldImage -> imageService.deleteImage(oldImage.getId()));
                 Image uploadedImage = imageRepository.findById(updateTaskRequest.getImageId())
                         .orElseThrow(() -> new IllegalStateException("Image not found"));
                 uploadedImage.setTask(task); // Link the image with the task
@@ -104,5 +105,31 @@ public class TaskService {
             }
         }
         taskRepository.save(task);
+
     }
+
+    //    @Transactional
+//    public void updateTask(UpdateTaskRequestDTO updateTaskRequest, Long userId) {
+//
+//        Task task = new Task(
+//                updateTaskRequest.getId(),
+//                updateTaskRequest.getTitle(),
+//                updateTaskRequest.getDescription(),
+//                updateTaskRequest.getStatus(),
+//                updateTaskRequest.getCreatedAt(),
+//                userId
+//        );
+//        if (updateTaskRequest.getImageId() != null) {
+//            try {
+//                Image uploadedImage = imageRepository.findById(updateTaskRequest.getImageId())
+//                        .orElseThrow(() -> new IllegalStateException("Image not found"));
+//                uploadedImage.setTask(task); // Link the image with the task
+//                task.setImage(uploadedImage);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                throw new IllegalStateException("Error uploading image");
+//            }
+//        }
+//        taskRepository.save(task);
+//    }
 }
