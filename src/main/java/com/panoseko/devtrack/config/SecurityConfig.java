@@ -43,7 +43,7 @@ public class SecurityConfig {
                         jwtAuthFilter,
                         UsernamePasswordAuthenticationFilter.class)
                 .logout(logout ->
-                        logout.logoutUrl("/api/v1/auth/logout") // TODO change to /api/v1/logout
+                        logout.logoutUrl("/api/v1/auth/logout")
                                 .addLogoutHandler(logoutHandler)
                                 .logoutSuccessHandler(
                                         (request, response, authentication) -> SecurityContextHolder.clearContext()
