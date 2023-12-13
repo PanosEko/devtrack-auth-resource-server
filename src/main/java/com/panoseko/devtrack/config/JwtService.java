@@ -23,7 +23,6 @@ public class JwtService {
     @Value("${jwt.secret.key}")
     private String secretKey;
 
-//    private final String secretKey = "b1055ab7abd4f6960fb1aea01c266f641a568efe4fd4071bac1c098333b31508";
 
     public JwtService(TokenRepository tokenRepository) {
         this.tokenRepository = tokenRepository;

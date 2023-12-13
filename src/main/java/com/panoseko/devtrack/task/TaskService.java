@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class TaskService {
@@ -82,10 +84,9 @@ public class TaskService {
         return taskRepository.save(task).getId();
     }
 
-    public void updateTask(UpdateTaskRequestDTO updateTaskRequest, Long userId) {
+    public void updateTask(UpdateTaskRequestDTO updateTaskRequest) {
         Task task = taskRepository.findById(updateTaskRequest.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Task not found"));
-
         // Update the task properties
         task.setTitle(updateTaskRequest.getTitle());
         task.setDescription(updateTaskRequest.getDescription());
@@ -94,7 +95,10 @@ public class TaskService {
         if (updateTaskRequest.getImageId() != null) {
             try {
                 // Delete the old image if it exists
-                imageRepository.findImageByTask(task.getId()).ifPresent(oldImage -> imageService.deleteImage(oldImage.getId()));
+                Optional<Image> oldImage = imageRepository.findImageByTask(task.getId());
+                if (oldImage.isPresent() && !Objects.equals(oldImage.get().getId(), updateTaskRequest.getImageId())) {
+                    imageService.deleteImage(oldImage.get().getId());
+                }
                 Image uploadedImage = imageRepository.findById(updateTaskRequest.getImageId())
                         .orElseThrow(() -> new IllegalStateException("Image not found"));
                 uploadedImage.setTask(task); // Link the image with the task

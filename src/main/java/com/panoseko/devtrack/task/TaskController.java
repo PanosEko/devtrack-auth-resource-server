@@ -50,11 +50,9 @@ public class TaskController {
 //    }
 
     @PutMapping()
-    public ResponseEntity<?> updateTask(@CookieValue(name = "access-token") String jwtToken,
-                                        @RequestBody UpdateTaskRequestDTO updateTaskRequest) {
-        Long userId = jwtService.extractUserId(jwtToken);
+    public ResponseEntity<?> updateTask(@RequestBody UpdateTaskRequestDTO updateTaskRequest) {
         System.out.println(updateTaskRequest);
-        taskService.updateTask(updateTaskRequest, userId);
+        taskService.updateTask(updateTaskRequest);
         return ResponseEntity.ok("Task updated successfully");
     }
 
