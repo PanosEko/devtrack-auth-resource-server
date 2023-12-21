@@ -1,5 +1,7 @@
 package com.panoseko.devtrack.auth;
 
+import com.panoseko.devtrack.exception.InvalidJwtException;
+import com.panoseko.devtrack.exception.UsernameAlreadyExistsException;
 import com.panoseko.devtrack.token.Token;
 import com.panoseko.devtrack.token.TokenRepository;
 import com.panoseko.devtrack.token.TokenType;
@@ -12,7 +14,6 @@ import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -54,8 +55,8 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-        Map<String, Object> customClaims = Map.of("uid", user.getId());
-        var accessToken = jwtService.generateAccessToken(customClaims, user);
+//        Map<String, Object> customClaims = Map.of("uid", user.getId());
+        var accessToken = jwtService.generateAccessToken( user);
         var refreshToken = jwtService.generateRefreshToken(user);
         saveToken(user, refreshToken);
         Cookie accessTokenCookie = generateAccessCookie(accessToken);
@@ -68,7 +69,7 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
         if (userRepository.findMemberByUsername(request.getUsername()).isPresent()) {
-            throw new BadCredentialsException("Username is taken.");
+            throw new UsernameAlreadyExistsException("Username is taken.");
         }
         var user = User.builder()
                 .fullName(request.getFullName())
@@ -78,8 +79,8 @@ public class AuthenticationService {
                 .role(Role.USER)
                 .build();
         userRepository.save(user);
-        Map<String, Object> customClaims = Map.of("uid", user.getId());
-        var accessToken = jwtService.generateAccessToken(customClaims, user);
+//        Map<String, Object> customClaims = Map.of("uid", user.getId());
+        var accessToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         saveToken(user, refreshToken);
         Cookie accessTokenCookie = generateAccessCookie(accessToken);
@@ -95,11 +96,10 @@ public class AuthenticationService {
         var user= userRepository.findMemberByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found."));
         if (jwtService.isRefreshTokenValid(token, user)) {
-            Map<String, Object> customClaims = Map.of("uid", user.getId());
-            var accessToken = jwtService.generateAccessToken(customClaims, user);
+            var accessToken = jwtService.generateAccessToken(user);
             return generateAccessCookie(accessToken);
         }else {
-            throw new BadCredentialsException("Invalid refresh token.");
+            throw new InvalidJwtException("Invalid refresh token.");
         }
     }
 

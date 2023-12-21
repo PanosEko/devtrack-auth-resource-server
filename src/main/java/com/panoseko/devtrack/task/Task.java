@@ -2,6 +2,7 @@ package com.panoseko.devtrack.task;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.panoseko.devtrack.image.Image;
+import com.panoseko.devtrack.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,27 +38,29 @@ public class Task {
     private Status status;
     @Temporal(TemporalType.DATE)
     private LocalDate createdAt;
-    private Long createdById;
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+//    @JsonIgnore
     @OneToOne(mappedBy = "task")
     private Image image;
 
 
-    public Task(String title, String description, Status status, LocalDate createdAt, Long createdById) {
+    public Task(String title, String description, Status status, LocalDate createdAt, User user) {
         this.title = title;
         this.description = description;
         this.status = status;
         this.createdAt = createdAt;
-        this.createdById = createdById;
+        this.user = user;
     }
 
-    public Task(Long id, String title, String description, Status status, LocalDate createdAt, Long createdById) {
+    public Task(Long id, String title, String description, Status status, LocalDate createdAt, User user) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
         this.createdAt = createdAt;
-        this.createdById = createdById;
+        this.user = user;
     }
 
 }

@@ -15,6 +15,7 @@ import org.hibernate.type.descriptor.jdbc.VarbinaryJdbcType;
 @AllArgsConstructor
 @Builder
 @Entity
+@Table(name = "image")
 public class Image {
 
     @Id
@@ -23,6 +24,7 @@ public class Image {
 
     private String name;
     private String type;
+
     @Lob
     @JdbcType(VarbinaryJdbcType.class)
     @Column(name= "image_data", length = 10000)

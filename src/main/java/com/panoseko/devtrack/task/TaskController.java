@@ -1,9 +1,14 @@
 package com.panoseko.devtrack.task;
 
-import com.panoseko.devtrack.config.JwtService;
+import com.panoseko.devtrack.exception.ImageNotFoundException;
+import com.panoseko.devtrack.exception.ImageProcessingException;
+import com.panoseko.devtrack.exception.TaskNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -11,35 +16,48 @@ import java.util.List;
 public class TaskController {
 
     private final TaskService taskService;
-    private final JwtService jwtService;
 
     @Autowired
-    public TaskController(TaskService taskService, JwtService jwtService) {
+    public TaskController(TaskService taskService) {
         this.taskService = taskService;
-        this.jwtService = jwtService;
     }
 
 
     @GetMapping()
-    public ResponseEntity<List<TaskResponseDTO>> getTasksByCreatorId(@CookieValue(name = "access-token") String jwtToken) {
-        Long userId = jwtService.extractUserId(jwtToken);
-        List<TaskResponseDTO> tasks = taskService.getTasks(userId);
+    public ResponseEntity<List<TaskDTO>> getTasksByUserId(Principal connectedUser)
+            throws ImageProcessingException {
+        List<TaskDTO> tasks = taskService.getTasks(connectedUser);
         return ResponseEntity.ok(tasks);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> addTask(@CookieValue(name = "access-token") String jwtToken,
-                                     @RequestBody AddTaskRequestDTO addTaskRequest) {
-        Long userId = jwtService.extractUserId(jwtToken);
-        Long taskId = taskService.addTask(addTaskRequest, userId);
-        return ResponseEntity.ok(taskId);
+    @PostMapping
+    public ResponseEntity<Long> addTask(@RequestBody AddTaskRequestDTO addTaskRequest,
+                                     Principal connectedUser) throws ImageNotFoundException {
+        Long taskId = taskService.addTask(addTaskRequest, connectedUser);
+        return new ResponseEntity<>(taskId,  HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> deleteTask(@PathVariable Long taskId) {
+    public ResponseEntity<String> deleteTask(@PathVariable Long taskId) throws TaskNotFoundException {
         taskService.deleteTask(taskId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Task deleted successfully");
     }
+
+    @PutMapping()
+    public ResponseEntity<String> updateTask(@RequestBody UpdateTaskRequestDTO updateTaskRequest)
+            throws TaskNotFoundException, ImageNotFoundException {
+        taskService.updateTask(updateTaskRequest);
+        return ResponseEntity.ok("Task updated successfully");
+    }
+
+// TODO validate @NotNull Status status
+    @PutMapping("/{taskId}/status")
+    public ResponseEntity<String> updateTaskStatus(@PathVariable Long taskId, @RequestParam("status") Status status)
+            throws TaskNotFoundException{
+        taskService.updateTaskStatus(taskId, status);
+        return ResponseEntity.ok("Task updated successfully");
+    }
+}
 
 //    @RequestMapping(method = RequestMethod.PUT, consumes = {"multipart/form-data"})
 //    public ResponseEntity<?> updateTask(@CookieValue(name = "access-token") String jwtToken,
@@ -49,18 +67,19 @@ public class TaskController {
 //        return ResponseEntity.ok("Task updated successfully");
 //    }
 
-    @PutMapping()
-    public ResponseEntity<?> updateTask(@RequestBody UpdateTaskRequestDTO updateTaskRequest) {
-        System.out.println(updateTaskRequest);
-        taskService.updateTask(updateTaskRequest);
-        return ResponseEntity.ok("Task updated successfully");
-    }
 
-
-    @PutMapping("/{taskId}/status")
-    public ResponseEntity<?> updateTaskStatus(@PathVariable Long taskId,
-                                              @RequestParam("status") Status status) {
-        taskService.updateTaskStatus(taskId, status);
-        return ResponseEntity.ok("Task status updated successfully");
-    }
-}
+//    @GetMapping()
+//    public ResponseEntity<List<TaskDTO>> getTasksByUserId(@CookieValue(name = "access-token") String jwtToken) {
+//        Long userId = jwtService.extractUserId(jwtToken);
+//        List<TaskDTO> tasks = taskService.getTasks(userId);
+//        return ResponseEntity.ok(tasks);
+//    }
+//
+//    @RequestMapping(method = RequestMethod.POST)
+//    public ResponseEntity<?> addTask(@CookieValue(name = "access-token") String jwtToken,
+//                                     @RequestBody AddTaskRequestDTO addTaskRequest,
+//                                     Principal connectedUser) {
+//        Long userId = jwtService.extractUserId(jwtToken);
+//        Long taskId = taskService.addTask(addTaskRequest, connectedUser);
+//        return ResponseEntity.ok(taskId);
+//    }

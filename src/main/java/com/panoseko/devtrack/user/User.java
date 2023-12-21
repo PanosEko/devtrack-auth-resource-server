@@ -1,5 +1,7 @@
 package com.panoseko.devtrack.user;
 
+import com.panoseko.devtrack.task.Task;
+import com.panoseko.devtrack.token.Token;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +43,11 @@ public class User implements UserDetails {
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @OneToMany(mappedBy = "user")
+    private List<Task> tasks;
+    @OneToMany(mappedBy = "user")
+    private List<Token> tokens;
+
 
     @Override
     public boolean isAccountNonExpired() {

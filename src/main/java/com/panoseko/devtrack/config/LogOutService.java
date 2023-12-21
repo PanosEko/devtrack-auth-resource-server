@@ -41,7 +41,7 @@ public class LogOutService implements LogoutHandler {
             HttpServletResponse response,
             Authentication authentication
     ) {
-        String refreshToken = CookieUtils.readServletCookie(request, "refresh-token").orElse(null);
+        String refreshToken = CookieUtils.readCookieValue(request, "refresh-token").orElse(null);
         var storedToken = tokenRepository.findByToken(refreshToken).orElse(null);
         if (storedToken != null) {
             storedToken.setExpired(true);

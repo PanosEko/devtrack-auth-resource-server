@@ -20,7 +20,7 @@ public final class CookieUtils {
         return cookie;
     }
 
-    public static Optional<String> readServletCookie(HttpServletRequest request, String name){
+    public static Optional<String> readCookieValue(HttpServletRequest request, String name){
         return Arrays.stream(request.getCookies())
                 .filter(cookie->name.equals(cookie.getName()))
                 .map(Cookie::getValue)

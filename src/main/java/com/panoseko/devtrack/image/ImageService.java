@@ -1,11 +1,13 @@
 package com.panoseko.devtrack.image;
 
+import com.panoseko.devtrack.exception.ImageNotFoundException;
+import com.panoseko.devtrack.exception.ImageProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Optional;
+import java.util.zip.DataFormatException;
 
 @Service
 public class ImageService {
@@ -17,49 +19,73 @@ public class ImageService {
         this.imageRepository = imageRepository;
     }
 
-    public Image uploadImage(MultipartFile file) throws IOException {
-        byte[] originalImageData = file.getBytes();
-        byte[] thumbnailData = ImageUtils.resizeImage(originalImageData, file.getContentType());
-
-        return imageRepository.save(Image.builder()
-                .name(file.getOriginalFilename())
-                .type(file.getContentType())
-                .imageData(ImageUtils.compressImage(originalImageData))
-                .thumbnailData(ImageUtils.compressImage(thumbnailData))
-                .build());
-
-    }
-
-    public void deleteImage(Long imageID){
-        Optional<Image> image = imageRepository.findById(imageID);
-        image.ifPresent(imageRepository::delete);
-    }
-
-    public Image downloadImage(Long imageId) {
-        Optional<Image> optionalImage = imageRepository.findById(imageId);
-        if (optionalImage.isPresent()) {
-            Image image = optionalImage.get();
-            image.setImageData(ImageUtils.decompressImage(image.getImageData()));
-            return image;
+    public ThumbnailDTO addImage(MultipartFile file) throws ImageProcessingException {
+        byte[] originalImageData;
+        byte[] thumbnailData;
+        try {
+            originalImageData = file.getBytes();
+            thumbnailData = ImageUtils.resizeForThumbnail(originalImageData, file.getContentType());
+            Image image = imageRepository.save(Image.builder()
+                    .name(file.getOriginalFilename())
+                    .type(file.getContentType())
+                    .imageData(ImageUtils.compress(originalImageData))
+                    .thumbnailData(ImageUtils.compress(thumbnailData))
+                    .build());
+            return new ThumbnailDTO(image.getId().toString(), thumbnailData);
+        } catch (IOException e) {
+            throw new ImageProcessingException("Failed to process image with parameters {name="
+                    + file.getOriginalFilename() + "} Image was not saved. " + e.getMessage());
         }
-        return null;
     }
 
-    public byte[] decompressImageData(byte[] imageData){
-        return ImageUtils.decompressImage(imageData);
+    public void delete(Long imageID) throws ImageNotFoundException {
+        Image image = imageRepository.findById(imageID).orElseThrow(() ->
+                new ImageNotFoundException("Image was not found for parameters {id=" +
+                        imageID + "}"));
+        imageRepository.delete(image);
     }
 
-    public void deleteImageByTaskId(Long taskID){
-        Optional<Image> image = imageRepository.findImageByTask(taskID);
-        image.ifPresent(imageRepository::delete);
+    public Image download(Long imageId)
+            throws ImageNotFoundException, ImageProcessingException {
+        Image image = imageRepository.findById(imageId).orElseThrow(()
+                -> new ImageNotFoundException("Image was not found for parameters {id=" +
+                imageId + "}"));
+        try {
+            image.setImageData(ImageUtils.decompress(image.getImageData()));
+        } catch (IOException | DataFormatException e) {
+            throw new ImageProcessingException("Failed to process image for parameters {id " +
+                    imageId + "}" + e.getMessage());
+        }
+        return image;
     }
 
-    public Optional<ThumbnailDTO> getThumbnail(Long imageId) {
-        return imageRepository.findById(imageId)
-                .map(image -> new ThumbnailDTO(
-                        image.getId().toString(),
-                        ImageUtils.decompressImage(image.getThumbnailData())
-                ));
+    public ThumbnailDTO getThumbnail(Long imageId)
+            throws ImageNotFoundException, ImageProcessingException {
+        Image image = imageRepository.findById(imageId).orElseThrow(() ->
+                new ImageNotFoundException("Image was not found for parameters {id=" + imageId + "}"));
+        try {
+            return new ThumbnailDTO(image.getId().toString(),
+                    ImageUtils.decompress(image.getThumbnailData()));
+        } catch (IOException | DataFormatException e) {
+            throw new ImageProcessingException("Failed to process image for parameters {id " +
+                    imageId + "}" + e.getMessage());
+        }
     }
 
+//    public void deleteByTaskId(Long taskId) throws ImageNotFoundException {
+//        Image image = imageRepository.findImageByTask(taskId).orElseThrow(() ->
+//                new ImageNotFoundException("Image was not found for parameters {taskId=" + taskId + "}"));
+//        imageRepository.delete(image);
+//    }
+
+//    public Image getByTaskId(Long taskId) throws ImageNotFoundException {
+//        return imageRepository.findImageByTask(taskId).orElseThrow(() ->
+//                new ImageNotFoundException("Image was not found for parameters {taskId=" + taskId + "}"));
+//    }
+//
+//    public Image get(Long imageId) throws ImageNotFoundException {
+//        return imageRepository.findById(imageId).orElseThrow(() ->
+//                new ImageNotFoundException("Image was not found for parameters {id=" + imageId + "}"));
+//
+//    }
 }

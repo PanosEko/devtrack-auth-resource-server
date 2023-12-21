@@ -1,5 +1,6 @@
 package com.panoseko.devtrack.auth;
 
+import com.panoseko.devtrack.exception.UsernameAlreadyExistsException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,22 +18,14 @@ public class AuthenticationController {
     private final AuthenticationService authService;
 
     @PostMapping("/authenticate")
-    public ResponseEntity<?> authenticate(
+    public ResponseEntity<String> authenticate(
             @RequestBody AuthenticationRequest request,
             HttpServletResponse response
     ){
-        try {
-            AuthenticationResponse authResponse = authService.authenticateUser(request);
-            response.addCookie(authResponse.getAccessTokenCookie());
-            response.addCookie(authResponse.getRefreshTokenCookie());
-            return ResponseEntity.ok("User authenticated successfully.");
-        } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Invalid password provided.");
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(("User not found."));
-        }
+        AuthenticationResponse authResponse = authService.authenticateUser(request);
+        response.addCookie(authResponse.getAccessTokenCookie());
+        response.addCookie(authResponse.getRefreshTokenCookie());
+        return ResponseEntity.ok("User authenticated successfully.");
     }
 
     @PostMapping("/register")
@@ -40,27 +33,20 @@ public class AuthenticationController {
             @RequestBody RegisterRequest request,
             HttpServletResponse response
     ) {
-        try{
-            AuthenticationResponse authResponse = authService.register(request);
-            response.addCookie(authResponse.getAccessTokenCookie());
-            response.addCookie(authResponse.getRefreshTokenCookie());
-            return ResponseEntity.ok("User authenticated successfully.");
-        }catch (BadCredentialsException e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Username is taken.");
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Error registering user.");
-        }
+        AuthenticationResponse authResponse = authService.register(request);
+        response.addCookie(authResponse.getAccessTokenCookie());
+        response.addCookie(authResponse.getRefreshTokenCookie());
+        return ResponseEntity.ok("User registered successfully.");
     }
 
+
+    // TODO required = false?
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(
             @CookieValue(name = "refresh-token", required = false) String refreshToken,
             HttpServletResponse response) {
         if (refreshToken == null) {
-            System.out.println("Refresh Token not found");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Refresh token not found.");
         } else {
             try{

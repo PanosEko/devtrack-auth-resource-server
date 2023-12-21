@@ -1,5 +1,6 @@
 package com.panoseko.devtrack.config;
 
+import com.panoseko.devtrack.token.Token;
 import com.panoseko.devtrack.token.TokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -32,10 +33,10 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public Long extractUserId(String token) {
-        Claims claims = extractAllClaims(token);
-        return Long.parseLong(claims.get("uid").toString());
-    }
+//    public Long extractUserId(String token) {
+//        Claims claims = extractAllClaims(token);
+//        return Long.parseLong(claims.get("uid").toString());
+//    }
 
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver){
@@ -43,11 +44,17 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
+//    public String generateAccessToken(
+//            Map<String, Object> extraClaims,
+//            UserDetails userDetails
+//    ) {
+//        return buildToken(extraClaims, userDetails, 1000 * 60 * 15); // 15 minutes
+//    }
+
     public String generateAccessToken(
-            Map<String, Object> extraClaims,
             UserDetails userDetails
     ) {
-        return buildToken(extraClaims, userDetails, 1000 * 60 * 15); // 15 minutes
+        return buildToken(new HashMap<>(), userDetails, 1000 * 60 * 15); // 15 minutes
     }
 
     public String generateRefreshToken(
@@ -81,7 +88,7 @@ public class JwtService {
     }
 
     private boolean isTokenRevoked(String token) {
-        var storedToken = tokenRepository.findByToken(token);
+        Optional<Token> storedToken = tokenRepository.findByToken(token);
         if (storedToken.isEmpty()) {
             return false;
         }
