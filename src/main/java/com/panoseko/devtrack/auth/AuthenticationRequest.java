@@ -12,8 +12,8 @@ import jakarta.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthenticationRequest {
-    @NotBlank(message = "username shouldn't be blank")
+    @NotBlank(message = "username is mandatory")
     private String username;
-    @NotBlank(message = "password shouldn't be blank")
+    @NotBlank(message = "password is mandatory")
     private String password;
 }

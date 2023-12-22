@@ -1,6 +1,7 @@
 package com.panoseko.devtrack.auth;
 
 import com.panoseko.devtrack.exception.InvalidJwtException;
+import com.panoseko.devtrack.exception.UsernameAlreadyTakenException;
 import com.panoseko.devtrack.token.Token;
 import com.panoseko.devtrack.token.TokenRepository;
 import com.panoseko.devtrack.token.TokenType;
@@ -66,9 +67,9 @@ public class AuthenticationService {
         );
     }
 
-    public AuthenticationResponse register(RegisterRequest request){
+    public AuthenticationResponse register(RegisterRequest request) throws UsernameAlreadyTakenException{
         if (userRepository.findMemberByUsername(request.getUsername()).isPresent()) {
-            return null;
+            throw new UsernameAlreadyTakenException("Username already taken.");
         }
         var user = User.builder()
                 .fullName(request.getFullName())
@@ -90,6 +91,9 @@ public class AuthenticationService {
     }
 
     public Cookie authenticateRefreshToken(String token) throws InvalidJwtException, UsernameNotFoundException{
+        if (token.isBlank()){
+            throw new InvalidJwtException("Refresh token not found.");
+        }
         String username = jwtService.extractUsername(token);
         var user= userRepository.findMemberByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found."));

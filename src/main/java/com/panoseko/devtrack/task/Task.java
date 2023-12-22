@@ -41,7 +41,6 @@ public class Task {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-//    @JsonIgnore
     @OneToOne(mappedBy = "task")
     private Image image;
 

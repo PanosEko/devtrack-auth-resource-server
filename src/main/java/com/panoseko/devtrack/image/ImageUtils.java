@@ -43,7 +43,7 @@ public class ImageUtils {
     public static byte[] resizeForThumbnail(byte[] imageData, String imageType) throws IOException {
         int maxDimension = 500;
         imageType = imageType.split("/")[1];
-        if (imageType.equals("png")) {
+        if (imageType.equals("/png")) {
             return imageData;
         }
         // Create a ByteArrayInputStream from the imageData byte array

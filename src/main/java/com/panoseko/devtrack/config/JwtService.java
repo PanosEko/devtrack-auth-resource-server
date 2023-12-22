@@ -33,23 +33,11 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-//    public Long extractUserId(String token) {
-//        Claims claims = extractAllClaims(token);
-//        return Long.parseLong(claims.get("uid").toString());
-//    }
-
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver){
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-
-//    public String generateAccessToken(
-//            Map<String, Object> extraClaims,
-//            UserDetails userDetails
-//    ) {
-//        return buildToken(extraClaims, userDetails, 1000 * 60 * 15); // 15 minutes
-//    }
 
     public String generateAccessToken(
             UserDetails userDetails

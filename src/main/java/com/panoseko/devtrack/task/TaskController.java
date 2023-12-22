@@ -41,22 +41,26 @@ public class TaskController {
     @DeleteMapping("/{taskId}")
     public ResponseEntity<String> deleteTask(@PathVariable Long taskId) throws TaskNotFoundException {
         taskService.deleteTask(taskId);
-        return ResponseEntity.ok("Task deleted successfully");
+        return ResponseEntity.ok().build();
+
     }
 
     @PutMapping()
     public ResponseEntity<String> updateTask(@RequestBody @Valid UpdateTaskRequestDTO updateTaskRequest)
             throws TaskNotFoundException, ImageNotFoundException {
         taskService.updateTask(updateTaskRequest);
-        return ResponseEntity.ok("Task updated successfully");
+        return ResponseEntity.ok().build();
+
     }
 
 // TODO validate @NotNull Status status
     @PutMapping("/{taskId}/status")
-    public ResponseEntity<String> updateTaskStatus(@PathVariable Long taskId, @RequestParam("status") Status status)
+    public ResponseEntity<String> updateTaskStatus(@PathVariable Long taskId,
+                                                   @RequestParam("status") Status status)
             throws TaskNotFoundException{
         taskService.updateTaskStatus(taskId, status);
-        return ResponseEntity.ok("Task updated successfully");
+        return ResponseEntity.ok().build();
+
     }
 }
 

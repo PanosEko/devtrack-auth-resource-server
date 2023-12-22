@@ -31,8 +31,8 @@ public class ImageController {
     public ResponseEntity<String> deleteImage(@PathVariable Long imageId)
             throws ImageNotFoundException {
         service.delete(imageId);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body("Image deleted successfully");
+        return ResponseEntity.ok().build();
+
     }
 
     @GetMapping("/{imageId}")

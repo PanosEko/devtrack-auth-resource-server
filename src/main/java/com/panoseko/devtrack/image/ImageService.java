@@ -40,16 +40,14 @@ public class ImageService {
 
     public void delete(Long imageID) throws ImageNotFoundException {
         Image image = imageRepository.findById(imageID).orElseThrow(() ->
-                new ImageNotFoundException("Image was not found for parameters {id=" +
-                        imageID + "}"));
+                new ImageNotFoundException("Image was not found for parameters {id=" + imageID + "}"));
         imageRepository.delete(image);
     }
 
     public Image download(Long imageId)
             throws ImageNotFoundException, ImageProcessingException {
         Image image = imageRepository.findById(imageId).orElseThrow(()
-                -> new ImageNotFoundException("Image was not found for parameters {id=" +
-                imageId + "}"));
+                -> new ImageNotFoundException("Image was not found for parameters {id=" + imageId + "}"));
         try {
             image.setImageData(ImageUtils.decompress(image.getImageData()));
         } catch (IOException | DataFormatException e) {
