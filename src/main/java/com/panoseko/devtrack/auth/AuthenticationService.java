@@ -1,7 +1,6 @@
 package com.panoseko.devtrack.auth;
 
 import com.panoseko.devtrack.exception.InvalidJwtException;
-import com.panoseko.devtrack.exception.UsernameAlreadyExistsException;
 import com.panoseko.devtrack.token.Token;
 import com.panoseko.devtrack.token.TokenRepository;
 import com.panoseko.devtrack.token.TokenType;
@@ -15,10 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +45,8 @@ public class AuthenticationService {
     private String cookieDomain;
 
 
-    public AuthenticationResponse authenticateUser(AuthenticationRequest request) {
+    public AuthenticationResponse authenticateUser(AuthenticationRequest request)
+            throws UsernameNotFoundException, AuthenticationException {
         var user= userRepository.findMemberByUsername(request.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found."));
         authManager.authenticate(
@@ -55,31 +55,6 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-//        Map<String, Object> customClaims = Map.of("uid", user.getId());
-        var accessToken = jwtService.generateAccessToken( user);
-        var refreshToken = jwtService.generateRefreshToken(user);
-        saveToken(user, refreshToken);
-        Cookie accessTokenCookie = generateAccessCookie(accessToken);
-        Cookie refreshTokenCookie = generateRefreshCookie(refreshToken);
-        return new AuthenticationResponse(
-                accessTokenCookie,
-                refreshTokenCookie
-        );
-    }
-
-    public AuthenticationResponse register(RegisterRequest request) {
-        if (userRepository.findMemberByUsername(request.getUsername()).isPresent()) {
-            throw new UsernameAlreadyExistsException("Username is taken.");
-        }
-        var user = User.builder()
-                .fullName(request.getFullName())
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
-                .build();
-        userRepository.save(user);
-//        Map<String, Object> customClaims = Map.of("uid", user.getId());
         var accessToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         saveToken(user, refreshToken);
@@ -91,7 +66,30 @@ public class AuthenticationService {
         );
     }
 
-    public Cookie authenticateRefreshToken(String token) {
+    public AuthenticationResponse register(RegisterRequest request){
+        if (userRepository.findMemberByUsername(request.getUsername()).isPresent()) {
+            return null;
+        }
+        var user = User.builder()
+                .fullName(request.getFullName())
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(Role.USER)
+                .build();
+        userRepository.save(user);
+        var accessToken = jwtService.generateAccessToken(user);
+        var refreshToken = jwtService.generateRefreshToken(user);
+        saveToken(user, refreshToken);
+        Cookie accessTokenCookie = generateAccessCookie(accessToken);
+        Cookie refreshTokenCookie = generateRefreshCookie(refreshToken);
+        return new AuthenticationResponse(
+                accessTokenCookie,
+                refreshTokenCookie
+        );
+    }
+
+    public Cookie authenticateRefreshToken(String token) throws InvalidJwtException, UsernameNotFoundException{
         String username = jwtService.extractUsername(token);
         var user= userRepository.findMemberByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found."));

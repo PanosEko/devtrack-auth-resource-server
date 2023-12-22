@@ -3,6 +3,7 @@ package com.panoseko.devtrack.task;
 import com.panoseko.devtrack.exception.ImageNotFoundException;
 import com.panoseko.devtrack.exception.ImageProcessingException;
 import com.panoseko.devtrack.exception.TaskNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> addTask(@RequestBody AddTaskRequestDTO addTaskRequest,
+    public ResponseEntity<Long> addTask(@RequestBody @Valid AddTaskRequestDTO addTaskRequest,
                                      Principal connectedUser) throws ImageNotFoundException {
         Long taskId = taskService.addTask(addTaskRequest, connectedUser);
         return new ResponseEntity<>(taskId,  HttpStatus.CREATED);
@@ -44,7 +45,7 @@ public class TaskController {
     }
 
     @PutMapping()
-    public ResponseEntity<String> updateTask(@RequestBody UpdateTaskRequestDTO updateTaskRequest)
+    public ResponseEntity<String> updateTask(@RequestBody @Valid UpdateTaskRequestDTO updateTaskRequest)
             throws TaskNotFoundException, ImageNotFoundException {
         taskService.updateTask(updateTaskRequest);
         return ResponseEntity.ok("Task updated successfully");
