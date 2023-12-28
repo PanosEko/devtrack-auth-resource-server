@@ -12,6 +12,7 @@ import com.panoseko.devtrack.user.UserRepository;
 
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationService {
 
     private final UserRepository userRepository;
@@ -82,6 +84,7 @@ public class AuthenticationService {
         var accessToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         saveToken(user, refreshToken);
+        log.info("A new user has registered with username: {}", user.getUsername());
         Cookie accessTokenCookie = generateAccessCookie(accessToken);
         Cookie refreshTokenCookie = generateRefreshCookie(refreshToken);
         return new AuthenticationResponse(

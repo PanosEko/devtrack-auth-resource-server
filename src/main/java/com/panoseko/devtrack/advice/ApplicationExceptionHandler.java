@@ -4,7 +4,6 @@ package com.panoseko.devtrack.advice;
 import com.panoseko.devtrack.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -100,10 +99,10 @@ public class ApplicationExceptionHandler {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(AuthenticationException.class)
-    public ErrorResponse handleBadCredentials(AuthenticationException ex) {
+    public ErrorResponse handleAuthenticationException(AuthenticationException ex) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorCode(HttpStatus.UNAUTHORIZED.value());
-        errorResponse.setErrorMessage(ex.getMessage());
+        errorResponse.setErrorMessage("Invalid password.");
         errorResponse.setStatus(HttpStatus.UNAUTHORIZED);
         errorResponse.setTimestamp(LocalDateTime.now());
         return errorResponse;

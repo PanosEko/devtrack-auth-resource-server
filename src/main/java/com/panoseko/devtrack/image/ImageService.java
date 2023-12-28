@@ -70,20 +70,4 @@ public class ImageService {
         }
     }
 
-//    public void deleteByTaskId(Long taskId) throws ImageNotFoundException {
-//        Image image = imageRepository.findImageByTask(taskId).orElseThrow(() ->
-//                new ImageNotFoundException("Image was not found for parameters {taskId=" + taskId + "}"));
-//        imageRepository.delete(image);
-//    }
-
-//    public Image getByTaskId(Long taskId) throws ImageNotFoundException {
-//        return imageRepository.findImageByTask(taskId).orElseThrow(() ->
-//                new ImageNotFoundException("Image was not found for parameters {taskId=" + taskId + "}"));
-//    }
-//
-//    public Image get(Long imageId) throws ImageNotFoundException {
-//        return imageRepository.findById(imageId).orElseThrow(() ->
-//                new ImageNotFoundException("Image was not found for parameters {id=" + imageId + "}"));
-//
-//    }
 }

@@ -1,6 +1,5 @@
 package com.panoseko.devtrack.task;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.panoseko.devtrack.image.Image;
 import com.panoseko.devtrack.user.User;
 import jakarta.persistence.*;
@@ -46,15 +45,6 @@ public class Task {
 
 
     public Task(String title, String description, Status status, LocalDate createdAt, User user) {
-        this.title = title;
-        this.description = description;
-        this.status = status;
-        this.createdAt = createdAt;
-        this.user = user;
-    }
-
-    public Task(Long id, String title, String description, Status status, LocalDate createdAt, User user) {
-        this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;

@@ -8,7 +8,6 @@ import com.panoseko.devtrack.image.ImageRepository;
 import com.panoseko.devtrack.image.ImageUtils;
 import com.panoseko.devtrack.image.ThumbnailDTO;
 import com.panoseko.devtrack.user.User;
-import org.hibernate.sql.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -17,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 
@@ -63,6 +60,7 @@ public class TaskService {
         if (task.getImage() != null) {
             imageRepository.delete(task.getImage());
         }
+        taskRepository.delete(task);
     }
 
     public void updateTaskStatus(Long taskId, Status status) throws TaskNotFoundException {
@@ -104,11 +102,6 @@ public class TaskService {
         task.setDescription(updateTaskRequest.getDescription());
         task.setStatus(updateTaskRequest.getStatus());
         task.setCreatedAt(updateTaskRequest.getCreatedAt());
-//         Delete the old image if it exists
-//        Optional<Image> oldImage = imageRepository.findImageByTask(task.getId());
-//        if (oldImage.isPresent() && !Objects.equals(oldImage.get().getId(), updateTaskRequest.getImageId())) {
-//            imageRepository.delete(oldImage.get());
-//        }
         if (updateTaskRequest.getImageId() != null) {
             Image uploadedImage = imageRepository.findById(updateTaskRequest.getImageId())
                     .orElseThrow(() -> new ImageNotFoundException("Image not found for parameters {id="
