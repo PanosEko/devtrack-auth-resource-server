@@ -16,3 +16,22 @@ The DevTrack Auth Resource Server is a component of the DevTrack web application
 - Spring Security: Robust security framework for managing authentication and authorization.
 - JWT: JSON-based open standard for creating access tokens.
 - PostgreSQL: Utilize a suitable database system for storing user-related data securely.
+
+## Important Note
+
+**Please read this before accessing the website!**
+
+**Server Startup Delay:** 
+
+Please note that the resource-auth server for this website is hosted on a free instance and will temporalily shut down when its not used. As a result, there might be a delay of approximately 3 minutes when accessing the website for the first time, however after that everything will work as intended. The free hosting instance may spin down after a period of inactivity, causing this initial delay. Subsequent accesses to the website will be instant once the server is up and running. I apologize for any inconvenience caused by this delay and appreciate your patience. 
+
+## Live Demo
+‼️Read the important note section before accessing.‼️
+
+You can access a live demo of the DevTrack web application here: [DevTrack web app link](https://devtrack.dedyn.io).
+
+If you dont want to sign up use these credentials:
+- Username: user
+- Password: pass123!
+
+Loggin in with these demo credentials gives you access to a prepopulated kanban board with predefined tasks and images, allowing you to explore the functionality of DevTrack without having to create an account or add tasks manually. To view or edit the details of a task just double click on the task.
