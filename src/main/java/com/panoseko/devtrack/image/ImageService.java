@@ -2,7 +2,7 @@ package com.panoseko.devtrack.image;
 
 import com.panoseko.devtrack.exception.ImageNotFoundException;
 import com.panoseko.devtrack.exception.ImageProcessingException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,14 +10,10 @@ import java.io.IOException;
 import java.util.zip.DataFormatException;
 
 @Service
+@RequiredArgsConstructor
 public class ImageService {
 
     private final ImageRepository imageRepository;
-
-    @Autowired
-    public ImageService(ImageRepository imageRepository) {
-        this.imageRepository = imageRepository;
-    }
 
     public ThumbnailDTO addImage(MultipartFile file) throws ImageProcessingException {
         byte[] originalImageData;
@@ -34,7 +30,7 @@ public class ImageService {
             return new ThumbnailDTO(image.getId().toString(), thumbnailData);
         } catch (IOException e) {
             throw new ImageProcessingException("Failed to process image with parameters {name="
-                    + file.getOriginalFilename() + "} Image was not saved. " + e.getMessage());
+                    + file.getOriginalFilename() + "}. Image was not saved. " + e.getMessage());
         }
     }
 
@@ -52,7 +48,7 @@ public class ImageService {
             image.setImageData(ImageUtils.decompress(image.getImageData()));
         } catch (IOException | DataFormatException e) {
             throw new ImageProcessingException("Failed to process image for parameters {id " +
-                    imageId + "}" + e.getMessage());
+                    imageId + "}." + e.getMessage());
         }
         return image;
     }
@@ -66,7 +62,7 @@ public class ImageService {
                     ImageUtils.decompress(image.getThumbnailData()));
         } catch (IOException | DataFormatException e) {
             throw new ImageProcessingException("Failed to process image for parameters {id " +
-                    imageId + "}" + e.getMessage());
+                    imageId + "}." + e.getMessage());
         }
     }
 

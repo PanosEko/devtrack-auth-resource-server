@@ -41,23 +41,16 @@ public class ImageUtils {
     }
 
     public static byte[] resizeForThumbnail(byte[] imageData, String imageType) throws IOException {
-        int maxDimension = 500;
+        int maxDimension = 500; // px
         imageType = imageType.split("/")[1];
-        if (imageType.equals("/png")) {
-            return imageData;
-        }
-        // Create a ByteArrayInputStream from the imageData byte array
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(imageData)) {
-            // Read the original image
             BufferedImage originalImage = ImageIO.read(inputStream);
 
-            // Determine the new dimensions while maintaining the aspect ratio
             int originalWidth = originalImage.getWidth();
             int originalHeight = originalImage.getHeight();
 
-            // Check if the original dimensions are smaller than the maximum dimension
+            // If the original dimensions are small, return the original image data
             if (originalWidth <= maxDimension && originalHeight <= maxDimension) {
-                // Return the original image data without resizing
                 return imageData;
             }
 
@@ -69,7 +62,7 @@ public class ImageUtils {
                 newWidth = maxDimension;
                 newHeight = (int) ((double) originalHeight / originalWidth * maxDimension);
             } else {
-                // Portrait image or square image
+                // Portrait image
                 newWidth = (int) ((double) originalWidth / originalHeight * maxDimension);
                 newHeight = maxDimension;
             }
@@ -80,11 +73,9 @@ public class ImageUtils {
             graphics2D.drawImage(originalImage, 0, 0, newWidth, newHeight, null);
             graphics2D.dispose();
 
-            // Write the resized image to a ByteArrayOutputStream
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 ImageIO.write(resizedImage, imageType, outputStream);
 
-                // Return the resized image data as a byte array
                 return outputStream.toByteArray();
             }
         }

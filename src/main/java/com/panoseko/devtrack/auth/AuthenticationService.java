@@ -81,10 +81,10 @@ public class AuthenticationService {
                 .role(Role.USER)
                 .build();
         userRepository.save(user);
+        log.info("A new user has registered with username: {}", user.getUsername());
         var accessToken = jwtService.generateAccessToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         saveToken(user, refreshToken);
-        log.info("A new user has registered with username: {}", user.getUsername());
         Cookie accessTokenCookie = generateAccessCookie(accessToken);
         Cookie refreshTokenCookie = generateRefreshCookie(refreshToken);
         return new AuthenticationResponse(
@@ -137,5 +137,4 @@ public class AuthenticationService {
                 1440 * 5 // 5 days
         );
     }
-
 }

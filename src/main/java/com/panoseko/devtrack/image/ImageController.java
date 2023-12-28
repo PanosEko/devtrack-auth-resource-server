@@ -2,7 +2,7 @@ package com.panoseko.devtrack.image;
 
 import com.panoseko.devtrack.exception.ImageNotFoundException;
 import com.panoseko.devtrack.exception.ImageProcessingException;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,14 +11,10 @@ import java.util.Base64;
 
 @RestController
 @RequestMapping(path = "api/v1/resources/images")
+@RequiredArgsConstructor
 public class ImageController {
 
     private final ImageService service;
-
-    @Autowired
-    public ImageController(ImageService imageService) {
-        this.service = imageService;
-    }
 
     @PostMapping
     public ResponseEntity<ThumbnailDTO> uploadImage(@RequestParam("image") MultipartFile file)

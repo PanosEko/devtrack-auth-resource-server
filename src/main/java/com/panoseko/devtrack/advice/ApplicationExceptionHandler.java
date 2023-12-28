@@ -8,6 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestCookieException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -36,17 +37,6 @@ public class ApplicationExceptionHandler {
         if (!errorMap.isEmpty()) {
             errorResponse.setErrorDetails(errorMap);
         }
-        return errorResponse;
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MissingRequestCookieException.class)
-    public ErrorResponse handleMissingRequestCookie(MissingRequestCookieException ex) {
-        ErrorResponse errorResponse = new ErrorResponse();
-        errorResponse.setStatus(HttpStatus.BAD_REQUEST);
-        errorResponse.setErrorCode(HttpStatus.BAD_REQUEST.value());
-        errorResponse.setErrorMessage(ex.getMessage());
-        errorResponse.setTimestamp(LocalDateTime.now());
         return errorResponse;
     }
 
@@ -85,6 +75,30 @@ public class ApplicationExceptionHandler {
         errorResponse.setTimestamp(LocalDateTime.now());
         return errorResponse;
     }
+
+    // Missing RequestParam errors are handled here
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ErrorResponse handleInvalidRequestParameter(MissingServletRequestParameterException  ex) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST);
+        errorResponse.setErrorCode(HttpStatus.BAD_REQUEST.value());
+        errorResponse.setErrorMessage(ex.getMessage());
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return errorResponse;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingRequestCookieException.class)
+    public ErrorResponse handleMissingRequestCookie(MissingRequestCookieException ex) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setStatus(HttpStatus.BAD_REQUEST);
+        errorResponse.setErrorCode(HttpStatus.BAD_REQUEST.value());
+        errorResponse.setErrorMessage(ex.getMessage());
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return errorResponse;
+    }
+
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(InvalidJwtException.class)
@@ -130,11 +144,4 @@ public class ApplicationExceptionHandler {
         return errorResponse;
     }
 }
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    @ExceptionHandler(UserNotFoundException.class)
-//    public Map<String, String> handleBusinessException(UserNotFoundException ex) {
-//        Map<String, String> errorMap = new HashMap<>();
-//        errorMap.put("errorMessage", ex.getMessage());
-//        return errorMap;
-//    }
 

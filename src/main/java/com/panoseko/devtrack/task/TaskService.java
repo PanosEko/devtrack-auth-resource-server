@@ -8,7 +8,7 @@ import com.panoseko.devtrack.image.ImageRepository;
 import com.panoseko.devtrack.image.ImageUtils;
 import com.panoseko.devtrack.image.ThumbnailDTO;
 import com.panoseko.devtrack.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,16 +20,11 @@ import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 
 @Service
+@RequiredArgsConstructor
 public class TaskService {
 
     private final TaskRepository taskRepository;
     private final ImageRepository imageRepository;
-
-    @Autowired
-    public TaskService(TaskRepository taskRepository, ImageRepository imageRepository) {
-        this.taskRepository = taskRepository;
-        this.imageRepository = imageRepository;
-    }
 
     public List<TaskDTO> getTasks(Principal connectedUser) throws ImageProcessingException {
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -54,6 +49,7 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteTask(Long taskId) throws TaskNotFoundException {
         Task task = taskRepository.findById(taskId).orElseThrow(() ->
                 new TaskNotFoundException("Task not found for parameters {id=" + taskId + "}"));
@@ -114,20 +110,3 @@ public class TaskService {
     }
 
 }
-
-
-//    public List<TaskDTO> getTasks(Long userId) {
-//        List<Task> tasks = taskRepository.findTasksByCreator(userId);
-//        return tasks.stream()
-//                .map(task -> {
-//                    TaskDTO taskResponse = new TaskDTO(task);
-//                    Image image = task.getImage();
-//                    if (image != null) {
-//                        ThumbnailDTO thumbnail = new ThumbnailDTO(image.getId().toString(),
-//                                imageService.decompressImageData(image.getThumbnailData()));
-//                        taskResponse.setThumbnail(thumbnail);
-//                    }
-//                    return taskResponse;
-//                })
-//                .collect(Collectors.toList());
-//    }
